@@ -26,9 +26,10 @@ public class Meal
     public decimal? ProteinG { get; set; }
     public decimal? CarbsG { get; set; }
     public decimal? FatG { get; set; }
-    public string? ImageUrl { get; set; }
+    public Guid? ImageFileId { get; set; }
 
     public MealPlan MealPlan { get; set; } = null!;
+    public ImageFile? ImageFile { get; set; }
 }
 
 public class FoodItem
@@ -39,6 +40,8 @@ public class FoodItem
     public decimal? ProteinG { get; set; }
     public decimal? CarbsG { get; set; }
     public decimal? FatG { get; set; }
-    public string? ImageUrl { get; set; }
+    public Guid? ImageFileId { get; set; }
     public string? Category { get; set; }
+
+    public ImageFile? ImageFile { get; set; }
 }

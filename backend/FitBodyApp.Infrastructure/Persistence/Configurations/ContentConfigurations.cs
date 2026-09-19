@@ -13,12 +13,14 @@ public class ArticleConfiguration : IEntityTypeConfiguration<Article>
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(200);
         builder.Property(x => x.Content).HasColumnName("content");
         builder.Property(x => x.Category).HasColumnName("category").HasMaxLength(50);
-        builder.Property(x => x.CoverImage).HasColumnName("cover_image").HasMaxLength(255);
+        builder.Property(x => x.CoverImageId).HasColumnName("cover_image_id");
         builder.Property(x => x.Author).HasColumnName("author").HasMaxLength(100);
         builder.Property(x => x.PublishedAt).HasColumnName("published_at");
 
         builder.HasIndex(x => x.Category).HasDatabaseName("idx_articles_category");
         builder.HasIndex(x => x.PublishedAt).HasDatabaseName("idx_articles_published_at");
+
+        builder.HasOne(x => x.CoverImage).WithMany().HasForeignKey(x => x.CoverImageId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -30,12 +32,15 @@ public class VideoConfiguration : IEntityTypeConfiguration<Video>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(200);
         builder.Property(x => x.Description).HasColumnName("description");
-        builder.Property(x => x.VideoUrl).HasColumnName("video_url").HasMaxLength(255);
-        builder.Property(x => x.ThumbnailUrl).HasColumnName("thumbnail_url").HasMaxLength(255);
+        builder.Property(x => x.VideoFileId).HasColumnName("video_file_id").IsRequired();
+        builder.Property(x => x.ThumbnailImageId).HasColumnName("thumbnail_image_id");
         builder.Property(x => x.DurationSeconds).HasColumnName("duration_seconds");
         builder.Property(x => x.Category).HasColumnName("category").HasMaxLength(50);
 
         builder.HasIndex(x => x.Category).HasDatabaseName("idx_videos_category");
+
+        builder.HasOne(x => x.VideoFile).WithMany().HasForeignKey(x => x.VideoFileId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.ThumbnailImage).WithMany().HasForeignKey(x => x.ThumbnailImageId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

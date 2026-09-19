@@ -52,6 +52,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IBlobStorageService, AzureBlobStorageService>();
+builder.Services.AddScoped<IMediaFileService, MediaFileService>();
 
 // TODO: chuyen sang Redis khi co san, hien dung IMemoryCache tam thoi
 builder.Services.AddMemoryCache();

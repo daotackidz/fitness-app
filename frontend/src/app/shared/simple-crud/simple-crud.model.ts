@@ -5,6 +5,8 @@ export interface CrudFieldConfig {
   options?: { value: string; label: string }[];
   required?: boolean;
   uploadContainer?: string;
+  mediaKind?: 'video' | 'image';
+  previewUrlKey?: string;
 }
 
 export interface CrudColumnConfig {

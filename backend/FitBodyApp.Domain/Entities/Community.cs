@@ -8,11 +8,12 @@ public class ForumPost
     public Guid UserId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Content { get; set; }
-    public string? ImageUrl { get; set; }
+    public Guid? ImageFileId { get; set; }
     public int LikesCount { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public User User { get; set; } = null!;
+    public ImageFile? ImageFile { get; set; }
     public ICollection<PostLike> Likes { get; set; } = new List<PostLike>();
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

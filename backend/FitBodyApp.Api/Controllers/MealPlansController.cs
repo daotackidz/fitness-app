@@ -39,10 +39,10 @@ public class MealPlansController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetDetail(Guid id)
     {
-        var plan = await _db.MealPlans.Include(m => m.Meals).FirstOrDefaultAsync(m => m.Id == id)
+        var plan = await _db.MealPlans.Include(m => m.Meals).ThenInclude(meal => meal.ImageFile).FirstOrDefaultAsync(m => m.Id == id)
             ?? throw AppException.NotFound("Khong tim thay meal plan");
 
-        var meals = plan.Meals.Select(m => new MealDto(m.Id, m.MealType.ToString(), m.Name, m.Calories, m.ProteinG, m.CarbsG, m.FatG, m.ImageUrl)).ToList();
+        var meals = plan.Meals.Select(m => new MealDto(m.Id, m.MealType.ToString(), m.Name, m.Calories, m.ProteinG, m.CarbsG, m.FatG, m.ImageFile?.Url)).ToList();
         var dto = new MealPlanDto(plan.Id, plan.Name, plan.Goal, plan.Description, plan.TotalCalories, plan.IsCustom, plan.CreatedByUserId, meals);
         return Ok(ApiResponse<MealPlanDto>.Ok(dto));
     }

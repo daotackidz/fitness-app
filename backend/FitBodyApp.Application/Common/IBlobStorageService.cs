@@ -1,8 +1,16 @@
 namespace FitBodyApp.Application.Common;
 
+public record BlobUploadResult(string Url, string BlobName, string Container, string FileName, string? ContentType, long SizeBytes);
+
 public interface IBlobStorageService
 {
-    Task<string> UploadAsync(string containerName, Stream content, string fileName, string? contentType);
+    Task<BlobUploadResult> UploadAsync(string containerName, Stream content, string fileName, string? contentType);
+}
+
+public interface IMediaFileService
+{
+    Task<(Guid Id, string Url)> SaveVideoFileAsync(BlobUploadResult upload, Guid? uploadedByUserId);
+    Task<(Guid Id, string Url)> SaveImageFileAsync(BlobUploadResult upload, Guid? uploadedByUserId);
 }
 
 public static class BlobContainers
@@ -25,3 +33,5 @@ public static class BlobContainers
         ForumPosts, Progress
     };
 }
+
+public enum MediaKind { Video, Image }

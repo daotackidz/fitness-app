@@ -15,13 +15,16 @@ public class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
         builder.Property(x => x.MuscleGroup).HasColumnName("muscle_group").HasMaxLength(50);
         builder.Property(x => x.Equipment).HasColumnName("equipment").HasMaxLength(50);
         builder.Property(x => x.DifficultyLevel).HasColumnName("difficulty_level").HasConversion<string>().HasMaxLength(20);
-        builder.Property(x => x.VideoUrl).HasColumnName("video_url").HasMaxLength(255);
-        builder.Property(x => x.ImageUrl).HasColumnName("image_url").HasMaxLength(255);
+        builder.Property(x => x.VideoFileId).HasColumnName("video_file_id");
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
         builder.Property(x => x.CaloriesEstimate).HasColumnName("calories_estimate");
 
         builder.HasIndex(x => x.MuscleGroup).HasDatabaseName("idx_exercises_muscle_group");
         builder.HasIndex(x => x.DifficultyLevel).HasDatabaseName("idx_exercises_difficulty");
         builder.HasIndex(x => x.Name).HasDatabaseName("idx_exercises_name_fts").HasMethod("gin").HasOperators("gin_trgm_ops");
+
+        builder.HasOne(x => x.VideoFile).WithMany().HasForeignKey(x => x.VideoFileId).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -100,11 +103,12 @@ public class ProgressTrackingConfiguration : IEntityTypeConfiguration<ProgressTr
         builder.Property(x => x.WeightKg).HasColumnName("weight_kg").HasColumnType("decimal(5,1)");
         builder.Property(x => x.BodyFatPercent).HasColumnName("body_fat_percent").HasColumnType("decimal(4,1)");
         builder.Property(x => x.MeasurementsJson).HasColumnName("measurements").HasColumnType("jsonb");
-        builder.Property(x => x.PhotoUrl).HasColumnName("photo_url").HasMaxLength(255);
+        builder.Property(x => x.PhotoImageId).HasColumnName("photo_image_id");
 
         builder.HasIndex(x => new { x.UserId, x.RecordDate }).HasDatabaseName("idx_progress_user_date");
 
         builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId);
+        builder.HasOne(x => x.PhotoImage).WithMany().HasForeignKey(x => x.PhotoImageId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

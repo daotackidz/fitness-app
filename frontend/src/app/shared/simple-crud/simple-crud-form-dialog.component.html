@@ -7,13 +7,13 @@
         <div class="file-field">
           <label class="file-field-label">{{ field.label }}</label>
           <div class="file-field-row">
-            <input type="file" (change)="onFileSelected($event, field.key, field.uploadContainer!)" />
+            <input type="file" (change)="onFileSelected($event, field.key, field.uploadContainer!, field.mediaKind!)" />
             @if (isUploading(field.key)) {
               <mat-spinner diameter="20"></mat-spinner>
             }
           </div>
-          @if (form.get(field.key)?.value) {
-            <a class="file-preview-link" [href]="form.get(field.key)?.value" target="_blank">Xem file da tai len</a>
+          @if (previewUrl(field.key)) {
+            <a class="file-preview-link" [href]="previewUrl(field.key)" target="_blank">Xem file da tai len</a>
           }
         </div>
       } @else {

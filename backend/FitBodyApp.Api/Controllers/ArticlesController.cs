@@ -3,6 +3,7 @@ using FitBodyApp.Application.Content;
 using FitBodyApp.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitBodyApp.Api.Controllers;
 
@@ -26,7 +27,7 @@ public class ArticlesController : ControllerBase
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await query.OrderByDescending(a => a.PublishedAt)
-            .Select(a => new ArticleDto(a.Id, a.Title, a.Content, a.Category, a.CoverImage, a.Author, a.PublishedAt))
+            .Select(ArticleMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<ArticleDto>>.Ok(items, meta));
@@ -35,8 +36,8 @@ public class ArticlesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetDetail(Guid id)
     {
-        var article = await _db.Articles.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai viet");
-        var dto = new ArticleDto(article.Id, article.Title, article.Content, article.Category, article.CoverImage, article.Author, article.PublishedAt);
+        var dto = await _db.Articles.Where(a => a.Id == id).Select(ArticleMappings.ToDto).FirstOrDefaultAsync();
+        if (dto is null) throw AppException.NotFound("Khong tim thay bai viet");
         return Ok(ApiResponse<ArticleDto>.Ok(dto));
     }
 }

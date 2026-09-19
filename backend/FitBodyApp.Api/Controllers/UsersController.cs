@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> UploadAvatar(IFormFile file)
     {
         await using var stream = file.OpenReadStream();
-        var url = await _userService.UpdateAvatarAsync(User.GetUserId(), stream, file.FileName);
+        var url = await _userService.UpdateAvatarAsync(User.GetUserId(), stream, file.FileName, file.ContentType);
         return Ok(ApiResponse<object>.Ok(new { avatarUrl = url }));
     }
 

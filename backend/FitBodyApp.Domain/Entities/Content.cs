@@ -8,9 +8,11 @@ public class Article
     public string Title { get; set; } = string.Empty;
     public string? Content { get; set; }
     public string? Category { get; set; }
-    public string? CoverImage { get; set; }
+    public Guid? CoverImageId { get; set; }
     public string? Author { get; set; }
     public DateTime? PublishedAt { get; set; }
+
+    public ImageFile? CoverImage { get; set; }
 }
 
 public class Video
@@ -18,10 +20,13 @@ public class Video
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
-    public string VideoUrl { get; set; } = string.Empty;
-    public string? ThumbnailUrl { get; set; }
+    public Guid VideoFileId { get; set; }
+    public Guid? ThumbnailImageId { get; set; }
     public int? DurationSeconds { get; set; }
     public string? Category { get; set; }
+
+    public VideoFile VideoFile { get; set; } = null!;
+    public ImageFile? ThumbnailImage { get; set; }
 }
 
 public class Favorite

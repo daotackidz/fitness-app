@@ -3,6 +3,7 @@ using System;
 using FitBodyApp.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitBodyApp.Infrastructure.Migrations
 {
     [DbContext(typeof(FitBodyDbContext))]
-    partial class FitBodyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260919102710_AddMediaFileTables")]
+    partial class AddMediaFileTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -558,6 +561,7 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasDatabaseName("idx_image_files_created_at");
 
                     b.HasIndex("UploadedByUserId")
+                        .IsUnique()
                         .HasDatabaseName("idx_image_files_uploaded_by");
 
                     b.ToTable("image_files", (string)null);

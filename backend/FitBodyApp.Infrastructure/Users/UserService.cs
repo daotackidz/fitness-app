@@ -10,22 +10,26 @@ public class UserService : IUserService
 {
     private readonly FitBodyDbContext _db;
     private readonly IBlobStorageService _blobStorage;
+    private readonly IMediaFileService _mediaFileService;
 
-    public UserService(FitBodyDbContext db, IBlobStorageService blobStorage)
+    public UserService(FitBodyDbContext db, IBlobStorageService blobStorage, IMediaFileService mediaFileService)
     {
         _db = db;
         _blobStorage = blobStorage;
+        _mediaFileService = mediaFileService;
     }
 
     public async Task<UserProfileDto> GetProfileAsync(Guid userId)
     {
-        var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay nguoi dung");
+        var user = await _db.Users.Include(u => u.AvatarImage).FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw AppException.NotFound("Khong tim thay nguoi dung");
         return ToProfileDto(user);
     }
 
     public async Task<UserProfileDto> UpdateProfileAsync(Guid userId, UpdateProfileRequest request)
     {
-        var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay nguoi dung");
+        var user = await _db.Users.Include(u => u.AvatarImage).FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw AppException.NotFound("Khong tim thay nguoi dung");
 
         if (request.FullName is not null) user.FullName = request.FullName;
         if (request.Gender is not null) user.Gender = Enum.Parse<Gender>(request.Gender, true);
@@ -40,12 +44,14 @@ public class UserService : IUserService
         return ToProfileDto(user);
     }
 
-    public async Task<string> UpdateAvatarAsync(Guid userId, Stream fileStream, string fileName)
+    public async Task<string> UpdateAvatarAsync(Guid userId, Stream fileStream, string fileName, string? contentType)
     {
         var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay nguoi dung");
 
-        var url = await _blobStorage.UploadAsync(BlobContainers.Avatars, fileStream, fileName, null);
-        user.AvatarUrl = url;
+        var uploadResult = await _blobStorage.UploadAsync(BlobContainers.Avatars, fileStream, fileName, contentType);
+        var (imageId, url) = await _mediaFileService.SaveImageFileAsync(uploadResult, userId);
+
+        user.AvatarImageId = imageId;
         user.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
         return url;
@@ -92,6 +98,6 @@ public class UserService : IUserService
     private static UserProfileDto ToProfileDto(Domain.Entities.User user) => new(
         user.Id, user.FullName, user.Email, user.Phone,
         user.Gender?.ToString(), user.DateOfBirth, user.HeightCm, user.WeightKg,
-        user.FitnessGoal?.ToString(), user.ActivityLevel?.ToString(), user.AvatarUrl,
+        user.FitnessGoal?.ToString(), user.ActivityLevel?.ToString(), user.AvatarImage?.Url,
         user.Role.ToString(), user.Status.ToString());
 }

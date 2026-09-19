@@ -25,9 +25,9 @@ public class ForumController : ControllerBase
     public async Task<IActionResult> GetList([FromQuery] int page = 1, [FromQuery] int limit = 20)
     {
         var paging = new PagedRequest { Page = page, Limit = limit };
-        var (items, meta) = await _db.ForumPosts.Include(p => p.User)
+        var (items, meta) = await _db.ForumPosts
             .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new ForumPostDto(p.Id, p.UserId, p.User.FullName, p.Title, p.Content, p.ImageUrl, p.LikesCount, p.CreatedAt))
+            .Select(ForumPostMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<ForumPostDto>>.Ok(items, meta));
@@ -43,7 +43,7 @@ public class ForumController : ControllerBase
             UserId = userId,
             Title = request.Title,
             Content = request.Content,
-            ImageUrl = request.ImageUrl,
+            ImageFileId = request.ImageFileId,
             LikesCount = 0,
             CreatedAt = DateTime.UtcNow
         };
@@ -56,10 +56,8 @@ public class ForumController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetDetail(Guid id)
     {
-        var post = await _db.ForumPosts.Include(p => p.User).FirstOrDefaultAsync(p => p.Id == id)
-            ?? throw AppException.NotFound("Khong tim thay bai dang");
-
-        var dto = new ForumPostDto(post.Id, post.UserId, post.User.FullName, post.Title, post.Content, post.ImageUrl, post.LikesCount, post.CreatedAt);
+        var dto = await _db.ForumPosts.Where(p => p.Id == id).Select(ForumPostMappings.ToDto).FirstOrDefaultAsync();
+        if (dto is null) throw AppException.NotFound("Khong tim thay bai dang");
         return Ok(ApiResponse<ForumPostDto>.Ok(dto));
     }
 

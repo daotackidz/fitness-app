@@ -10,10 +10,12 @@ public class Exercise
     public string? MuscleGroup { get; set; }
     public string? Equipment { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
-    public string? VideoUrl { get; set; }
-    public string? ImageUrl { get; set; }
+    public Guid? VideoFileId { get; set; }
+    public Guid? ImageFileId { get; set; }
     public int? CaloriesEstimate { get; set; }
 
+    public VideoFile? VideoFile { get; set; }
+    public ImageFile? ImageFile { get; set; }
     public ICollection<RoutineExercise> RoutineExercises { get; set; } = new List<RoutineExercise>();
 }
 
@@ -69,9 +71,10 @@ public class ProgressTracking
     public decimal? WeightKg { get; set; }
     public decimal? BodyFatPercent { get; set; }
     public string? MeasurementsJson { get; set; }
-    public string? PhotoUrl { get; set; }
+    public Guid? PhotoImageId { get; set; }
 
     public User User { get; set; } = null!;
+    public ImageFile? PhotoImage { get; set; }
 }
 
 public class Recommendation

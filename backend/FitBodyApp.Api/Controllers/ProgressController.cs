@@ -32,7 +32,7 @@ public class ProgressController : ControllerBase
             WeightKg = request.WeightKg,
             BodyFatPercent = request.BodyFatPercent,
             MeasurementsJson = request.MeasurementsJson,
-            PhotoUrl = request.PhotoUrl
+            PhotoImageId = request.PhotoImageId
         };
         _db.ProgressTrackings.Add(record);
         await _db.SaveChangesAsync();
@@ -52,7 +52,7 @@ public class ProgressController : ControllerBase
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await query.OrderByDescending(p => p.RecordDate)
-            .Select(p => new ProgressDto(p.Id, p.RecordDate, p.WeightKg, p.BodyFatPercent, p.MeasurementsJson, p.PhotoUrl))
+            .Select(ProgressMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<ProgressDto>>.Ok(items, meta));

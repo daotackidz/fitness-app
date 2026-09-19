@@ -26,7 +26,7 @@ public class AdminExercisesController : ControllerBase
     {
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.Exercises.OrderBy(e => e.Name)
-            .Select(e => new ExerciseDto(e.Id, e.Name, e.Description, e.MuscleGroup, e.Equipment, e.DifficultyLevel.ToString(), e.VideoUrl, e.ImageUrl, e.CaloriesEstimate))
+            .Select(ExerciseMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
         return Ok(ApiResponse<List<ExerciseDto>>.Ok(items, meta));
     }
@@ -45,8 +45,8 @@ public class AdminExercisesController : ControllerBase
             MuscleGroup = request.MuscleGroup,
             Equipment = request.Equipment,
             DifficultyLevel = level,
-            VideoUrl = request.VideoUrl,
-            ImageUrl = request.ImageUrl,
+            VideoFileId = request.VideoFileId,
+            ImageFileId = request.ImageFileId,
             CaloriesEstimate = request.CaloriesEstimate
         };
         _db.Exercises.Add(exercise);
@@ -66,8 +66,8 @@ public class AdminExercisesController : ControllerBase
         exercise.MuscleGroup = request.MuscleGroup;
         exercise.Equipment = request.Equipment;
         exercise.DifficultyLevel = level;
-        exercise.VideoUrl = request.VideoUrl;
-        exercise.ImageUrl = request.ImageUrl;
+        exercise.VideoFileId = request.VideoFileId;
+        exercise.ImageFileId = request.ImageFileId;
         exercise.CaloriesEstimate = request.CaloriesEstimate;
         await _db.SaveChangesAsync();
         return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));

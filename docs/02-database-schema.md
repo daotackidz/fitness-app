@@ -387,3 +387,49 @@
 | created_at | TIMESTAMP | |
 
 *Index:* `idx_reported_contents_status (status)`.
+
+## 8. Phụ lục: File media (video_files, image_files)
+
+Toàn bộ file video/ảnh do người dùng hoặc admin upload (qua Azure Blob Storage) được lưu metadata đầy đủ
+trong 2 bảng riêng, thay vì chỉ lưu URL dạng chuỗi rải rác trong các bảng nội dung. Các cột `*_url` gốc
+trong đặc tả ban đầu (ở mục 1-6) được thay bằng khoá ngoại trỏ tới 2 bảng này; response API vẫn trả về
+URL đã resolve sẵn (không đổi hợp đồng API phía client).
+
+**video_files**
+
+| Cột | Kiểu | Ghi chú |
+| --- | --- | --- |
+| id | UUID (PK) | |
+| url | VARCHAR(500) | SAS URL (read, hạn dài) vì storage account chặn public access |
+| blob_name | VARCHAR(255) | Tên blob duy nhất trong container |
+| container | VARCHAR(100) | Container Azure chứa file (vd: `videos`, `exercises`) |
+| file_name | VARCHAR(255) | Tên file gốc lúc upload |
+| content_type | VARCHAR(100) (NULLABLE) | MIME type |
+| size_bytes | BIGINT | |
+| uploaded_by_user_id | UUID (FK → users.id, NULLABLE) | |
+| created_at | TIMESTAMP | |
+
+*Index:* `idx_video_files_uploaded_by (uploaded_by_user_id)`, `idx_video_files_created_at (created_at)`.
+
+**image_files** — cấu trúc giống hệt `video_files` (cùng các cột trên), tách bảng riêng để phân biệt loại
+media và tránh nhầm lẫn với bảng `videos` (nội dung "Workout Videos" đã có ở mục 4).
+
+*Index:* `idx_image_files_uploaded_by (uploaded_by_user_id)`, `idx_image_files_created_at (created_at)`.
+
+**Các cột đã đổi từ URL string sang khoá ngoại:**
+
+| Bảng | Cột cũ | Cột mới |
+| --- | --- | --- |
+| users | avatar_url | avatar_image_id (FK → image_files.id, NULLABLE) |
+| exercises | video_url, image_url | video_file_id, image_file_id (FK, NULLABLE) |
+| articles | cover_image | cover_image_id (FK → image_files.id, NULLABLE) |
+| videos | video_url (required), thumbnail_url | video_file_id (FK → video_files.id, NOT NULL), thumbnail_image_id (FK, NULLABLE) |
+| progress_tracking | photo_url | photo_image_id (FK → image_files.id, NULLABLE) |
+| forum_posts | image_url | image_file_id (FK → image_files.id, NULLABLE) |
+| meals | image_url | image_file_id (FK → image_files.id, NULLABLE) |
+| food_items | image_url | image_file_id (FK → image_files.id, NULLABLE) |
+
+**Upload API:** `POST /uploads?container=&type=` (user, container giới hạn `forum-posts`/`progress`) và
+`POST /admin/uploads?container=&type=` (admin, container giới hạn `exercises`/`articles`/`videos`/`meal-plans`),
+`type` là `video` hoặc `image`. Response trả `{ id, url }` — `id` dùng để gửi lại trong request tạo/sửa
+nội dung (vd. `imageFileId`), `url` dùng để hiển thị preview ngay trên client.

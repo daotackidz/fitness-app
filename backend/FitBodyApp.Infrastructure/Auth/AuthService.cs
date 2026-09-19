@@ -161,7 +161,11 @@ public class AuthService : IAuthService
         });
         await _db.SaveChangesAsync();
 
-        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Phone, user.Role.ToString(), user.Status.ToString(), user.AvatarUrl);
+        var avatarUrl = user.AvatarImageId.HasValue
+            ? await _db.ImageFiles.Where(i => i.Id == user.AvatarImageId).Select(i => i.Url).FirstOrDefaultAsync()
+            : null;
+
+        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Phone, user.Role.ToString(), user.Status.ToString(), avatarUrl);
         return new AuthResultDto(accessToken, refreshToken, _tokenGenerator.AccessTokenMinutes * 60, userDto);
     }
 

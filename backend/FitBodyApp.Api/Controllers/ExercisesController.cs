@@ -38,8 +38,7 @@ public class ExercisesController : ControllerBase
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await query.OrderBy(e => e.Name)
-            .Select(e => new ExerciseDto(e.Id, e.Name, e.Description, e.MuscleGroup, e.Equipment,
-                e.DifficultyLevel.ToString(), e.VideoUrl, e.ImageUrl, e.CaloriesEstimate))
+            .Select(ExerciseMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<ExerciseDto>>.Ok(items, meta));
@@ -48,11 +47,9 @@ public class ExercisesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetDetail(Guid id)
     {
-        var exercise = await _db.Exercises.FindAsync(id);
-        if (exercise is null) throw AppException.NotFound("Khong tim thay bai tap");
+        var dto = await _db.Exercises.Where(e => e.Id == id).Select(ExerciseMappings.ToDto).FirstOrDefaultAsync();
+        if (dto is null) throw AppException.NotFound("Khong tim thay bai tap");
 
-        var dto = new ExerciseDto(exercise.Id, exercise.Name, exercise.Description, exercise.MuscleGroup,
-            exercise.Equipment, exercise.DifficultyLevel.ToString(), exercise.VideoUrl, exercise.ImageUrl, exercise.CaloriesEstimate);
         return Ok(ApiResponse<ExerciseDto>.Ok(dto));
     }
 }

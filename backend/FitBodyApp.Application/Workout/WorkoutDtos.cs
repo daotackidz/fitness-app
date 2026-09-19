@@ -1,7 +1,20 @@
+using System.Linq.Expressions;
+using FitBodyApp.Domain.Entities;
+
 namespace FitBodyApp.Application.Workout;
 
 public record ExerciseDto(Guid Id, string Name, string? Description, string? MuscleGroup, string? Equipment,
-    string DifficultyLevel, string? VideoUrl, string? ImageUrl, int? CaloriesEstimate);
+    string DifficultyLevel, string? VideoUrl, string? ImageUrl, int? CaloriesEstimate,
+    Guid? VideoFileId, Guid? ImageFileId);
+
+public static class ExerciseMappings
+{
+    public static readonly Expression<Func<Exercise, ExerciseDto>> ToDto = e => new ExerciseDto(
+        e.Id, e.Name, e.Description, e.MuscleGroup, e.Equipment, e.DifficultyLevel.ToString(),
+        e.VideoFile != null ? e.VideoFile.Url : null,
+        e.ImageFile != null ? e.ImageFile.Url : null,
+        e.CaloriesEstimate, e.VideoFileId, e.ImageFileId);
+}
 
 public record RoutineExerciseDto(Guid ExerciseId, string ExerciseName, int Sets, int Reps, int RestSeconds, int OrderIndex);
 
@@ -22,9 +35,16 @@ public record WorkoutLogDto(Guid Id, Guid? RoutineId, Guid? ExerciseId, DateOnly
     int? SetsCompleted, int? RepsCompleted, decimal? WeightUsedKg, int? CaloriesBurned);
 
 public record CreateProgressRequest(DateOnly RecordDate, decimal? WeightKg, decimal? BodyFatPercent,
-    string? MeasurementsJson, string? PhotoUrl);
+    string? MeasurementsJson, Guid? PhotoImageId);
 
 public record ProgressDto(Guid Id, DateOnly RecordDate, decimal? WeightKg, decimal? BodyFatPercent,
-    string? MeasurementsJson, string? PhotoUrl);
+    string? MeasurementsJson, string? PhotoUrl, Guid? PhotoImageId);
+
+public static class ProgressMappings
+{
+    public static readonly Expression<Func<ProgressTracking, ProgressDto>> ToDto = p => new ProgressDto(
+        p.Id, p.RecordDate, p.WeightKg, p.BodyFatPercent, p.MeasurementsJson,
+        p.PhotoImage != null ? p.PhotoImage.Url : null, p.PhotoImageId);
+}
 
 public record RecommendationDto(Guid ExerciseId, string ExerciseName, string Reason);

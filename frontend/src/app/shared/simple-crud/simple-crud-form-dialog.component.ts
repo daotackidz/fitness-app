@@ -38,6 +38,7 @@ export interface SimpleCrudDialogData {
 export class SimpleCrudFormDialogComponent {
   readonly form: FormGroup;
   readonly uploadingFields = signal<Record<string, boolean>>({});
+  readonly previewUrls = signal<Record<string, string | null>>({});
 
   constructor(
     private fb: FormBuilder,
@@ -46,18 +47,27 @@ export class SimpleCrudFormDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: SimpleCrudDialogData
   ) {
     const group: Record<string, any> = {};
+    const initialPreviews: Record<string, string | null> = {};
     for (const field of data.config.fields) {
       const initialValue = data.record?.[field.key] ?? '';
       group[field.key] = [initialValue, field.required ? [Validators.required] : []];
+      if (field.type === 'file' && field.previewUrlKey) {
+        initialPreviews[field.key] = data.record?.[field.previewUrlKey] ?? null;
+      }
     }
     this.form = this.fb.group(group);
+    this.previewUrls.set(initialPreviews);
   }
 
   isUploading(key: string): boolean {
     return !!this.uploadingFields()[key];
   }
 
-  async onFileSelected(event: Event, key: string, container: string): Promise<void> {
+  previewUrl(key: string): string | null {
+    return this.previewUrls()[key] ?? null;
+  }
+
+  async onFileSelected(event: Event, key: string, container: string, mediaKind: string): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
@@ -67,9 +77,13 @@ export class SimpleCrudFormDialogComponent {
       const formData = new FormData();
       formData.append('file', file);
       const response = await firstValueFrom(
-        this.http.post<ApiResponse<{ url: string }>>(`${environment.apiBaseUrl}/admin/uploads?container=${container}`, formData)
+        this.http.post<ApiResponse<{ id: string; url: string }>>(
+          `${environment.apiBaseUrl}/admin/uploads?container=${container}&type=${mediaKind}`,
+          formData
+        )
       );
-      this.form.get(key)?.setValue(response.data!.url);
+      this.form.get(key)?.setValue(response.data!.id);
+      this.previewUrls.update((state) => ({ ...state, [key]: response.data!.url }));
     } finally {
       this.uploadingFields.update((state) => ({ ...state, [key]: false }));
     }

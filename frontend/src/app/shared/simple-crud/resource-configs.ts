@@ -20,8 +20,8 @@ export const EXERCISES_CONFIG: CrudResourceConfig = {
     { key: 'muscleGroup', label: 'Nhom co', type: 'text' },
     { key: 'equipment', label: 'Dung cu', type: 'text' },
     { key: 'difficultyLevel', label: 'Cap do', type: 'select', options: DIFFICULTY_OPTIONS, required: true },
-    { key: 'videoUrl', label: 'Video huong dan', type: 'file', uploadContainer: 'exercises' },
-    { key: 'imageUrl', label: 'Anh minh hoa', type: 'file', uploadContainer: 'exercises' },
+    { key: 'videoFileId', label: 'Video huong dan', type: 'file', uploadContainer: 'exercises', mediaKind: 'video', previewUrlKey: 'videoUrl' },
+    { key: 'imageFileId', label: 'Anh minh hoa', type: 'file', uploadContainer: 'exercises', mediaKind: 'image', previewUrlKey: 'imageUrl' },
     { key: 'caloriesEstimate', label: 'Calo uoc tinh', type: 'number' }
   ]
 };
@@ -70,7 +70,7 @@ export const ARTICLES_CONFIG: CrudResourceConfig = {
     { key: 'title', label: 'Tieu de', type: 'text', required: true },
     { key: 'content', label: 'Noi dung', type: 'textarea' },
     { key: 'category', label: 'Chuyen muc', type: 'text' },
-    { key: 'coverImage', label: 'Anh bia', type: 'file', uploadContainer: 'articles' },
+    { key: 'coverImageId', label: 'Anh bia', type: 'file', uploadContainer: 'articles', mediaKind: 'image', previewUrlKey: 'coverImage' },
     { key: 'author', label: 'Tac gia', type: 'text' }
   ]
 };
@@ -86,8 +86,8 @@ export const VIDEOS_CONFIG: CrudResourceConfig = {
   fields: [
     { key: 'title', label: 'Tieu de', type: 'text', required: true },
     { key: 'description', label: 'Mo ta', type: 'textarea' },
-    { key: 'videoUrl', label: 'File video', type: 'file', uploadContainer: 'videos', required: true },
-    { key: 'thumbnailUrl', label: 'Thumbnail', type: 'file', uploadContainer: 'videos' },
+    { key: 'videoFileId', label: 'File video', type: 'file', uploadContainer: 'videos', mediaKind: 'video', previewUrlKey: 'videoUrl', required: true },
+    { key: 'thumbnailImageId', label: 'Thumbnail', type: 'file', uploadContainer: 'videos', mediaKind: 'image', previewUrlKey: 'thumbnailUrl' },
     { key: 'durationSeconds', label: 'Thoi luong (giay)', type: 'number' },
     { key: 'category', label: 'Chuyen muc', type: 'text' }
   ]

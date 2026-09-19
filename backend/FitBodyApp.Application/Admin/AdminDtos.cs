@@ -6,15 +6,15 @@ public record UpdateUserStatusRequest(string Status);
 public record UpdateUserRoleRequest(string Role);
 
 public record UpsertExerciseRequest(string Name, string? Description, string? MuscleGroup, string? Equipment,
-    string DifficultyLevel, string? VideoUrl, string? ImageUrl, int? CaloriesEstimate);
+    string DifficultyLevel, Guid? VideoFileId, Guid? ImageFileId, int? CaloriesEstimate);
 
 public record UpsertRoutineRequest(string Name, string Level, string? Description, int? DurationWeeks);
 
 public record UpsertMealPlanRequest(string Name, string? Goal, string? Description, int? TotalCalories);
 
-public record UpsertArticleRequest(string Title, string? Content, string? Category, string? CoverImage, string? Author);
+public record UpsertArticleRequest(string Title, string? Content, string? Category, Guid? CoverImageId, string? Author);
 
-public record UpsertVideoRequest(string Title, string? Description, string VideoUrl, string? ThumbnailUrl, int? DurationSeconds, string? Category);
+public record UpsertVideoRequest(string Title, string? Description, Guid VideoFileId, Guid? ThumbnailImageId, int? DurationSeconds, string? Category);
 
 public record UpsertFaqRequest(string Question, string Answer, string? Category);
 

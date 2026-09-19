@@ -20,7 +20,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.WeightKg).HasColumnName("weight_kg").HasColumnType("decimal(5,1)");
         builder.Property(x => x.FitnessGoal).HasColumnName("fitness_goal").HasConversion<string>().HasMaxLength(30);
         builder.Property(x => x.ActivityLevel).HasColumnName("activity_level").HasConversion<string>().HasMaxLength(20);
-        builder.Property(x => x.AvatarUrl).HasColumnName("avatar_url").HasMaxLength(255);
+        builder.Property(x => x.AvatarImageId).HasColumnName("avatar_image_id");
         builder.Property(x => x.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(20).HasDefaultValue(Domain.Enums.UserStatus.Active);
         builder.Property(x => x.Role).HasColumnName("role").HasConversion<string>().HasMaxLength(20).HasDefaultValue(Domain.Enums.UserRole.User);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
@@ -32,6 +32,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(x => x.Role).HasDatabaseName("idx_users_role");
 
         builder.HasOne(x => x.Settings).WithOne(x => x.User).HasForeignKey<UserSetting>(x => x.UserId);
+        builder.HasOne(x => x.AvatarImage).WithMany().HasForeignKey(x => x.AvatarImageId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

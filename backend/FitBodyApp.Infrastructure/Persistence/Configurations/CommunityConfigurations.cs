@@ -13,7 +13,7 @@ public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.Title).HasColumnName("title").HasMaxLength(200);
         builder.Property(x => x.Content).HasColumnName("content");
-        builder.Property(x => x.ImageUrl).HasColumnName("image_url").HasMaxLength(255);
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
         builder.Property(x => x.LikesCount).HasColumnName("likes_count").HasDefaultValue(0);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
 
@@ -21,6 +21,7 @@ public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
         builder.HasIndex(x => x.CreatedAt).HasDatabaseName("idx_forum_posts_created_at");
 
         builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId);
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

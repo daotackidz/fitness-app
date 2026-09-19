@@ -16,8 +16,9 @@ public class AzureBlobStorageService : IBlobStorageService
         _blobServiceClient = new BlobServiceClient(connectionString);
     }
 
-    public async Task<string> UploadAsync(string containerName, Stream content, string fileName, string? contentType)
+    public async Task<BlobUploadResult> UploadAsync(string containerName, Stream content, string fileName, string? contentType)
     {
+        var sizeBytes = content.Length;
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.None);
 
@@ -25,11 +26,13 @@ public class AzureBlobStorageService : IBlobStorageService
         var blobName = $"{Guid.NewGuid()}{extension}";
         var blobClient = containerClient.GetBlobClient(blobName);
 
-        var headers = new BlobHttpHeaders { ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType };
+        var resolvedContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType;
+        var headers = new BlobHttpHeaders { ContentType = resolvedContentType };
         await blobClient.UploadAsync(content, new BlobUploadOptions { HttpHeaders = headers });
 
         // Storage account khong cho phep public access -> sinh SAS read-only han dai de luu URL truy cap truc tiep vao DB
         var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddYears(10));
-        return sasUri.ToString();
+
+        return new BlobUploadResult(sasUri.ToString(), blobName, containerName, fileName, resolvedContentType, sizeBytes);
     }
 }

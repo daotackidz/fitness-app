@@ -25,7 +25,7 @@ public class AdminVideosController : ControllerBase
     {
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.Videos.OrderBy(v => v.Title)
-            .Select(v => new VideoDto(v.Id, v.Title, v.Description, v.VideoUrl, v.ThumbnailUrl, v.DurationSeconds, v.Category))
+            .Select(VideoMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
         return Ok(ApiResponse<List<VideoDto>>.Ok(items, meta));
     }
@@ -38,8 +38,8 @@ public class AdminVideosController : ControllerBase
             Id = Guid.NewGuid(),
             Title = request.Title,
             Description = request.Description,
-            VideoUrl = request.VideoUrl,
-            ThumbnailUrl = request.ThumbnailUrl,
+            VideoFileId = request.VideoFileId,
+            ThumbnailImageId = request.ThumbnailImageId,
             DurationSeconds = request.DurationSeconds,
             Category = request.Category
         };
@@ -54,8 +54,8 @@ public class AdminVideosController : ControllerBase
         var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay video");
         video.Title = request.Title;
         video.Description = request.Description;
-        video.VideoUrl = request.VideoUrl;
-        video.ThumbnailUrl = request.ThumbnailUrl;
+        video.VideoFileId = request.VideoFileId;
+        video.ThumbnailImageId = request.ThumbnailImageId;
         video.DurationSeconds = request.DurationSeconds;
         video.Category = request.Category;
         await _db.SaveChangesAsync();

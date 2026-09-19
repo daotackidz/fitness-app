@@ -3,6 +3,7 @@ using FitBodyApp.Application.Content;
 using FitBodyApp.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitBodyApp.Api.Controllers;
 
@@ -26,7 +27,7 @@ public class VideosController : ControllerBase
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await query.OrderBy(v => v.Title)
-            .Select(v => new VideoDto(v.Id, v.Title, v.Description, v.VideoUrl, v.ThumbnailUrl, v.DurationSeconds, v.Category))
+            .Select(VideoMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<VideoDto>>.Ok(items, meta));
@@ -35,8 +36,8 @@ public class VideosController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetDetail(Guid id)
     {
-        var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay video");
-        var dto = new VideoDto(video.Id, video.Title, video.Description, video.VideoUrl, video.ThumbnailUrl, video.DurationSeconds, video.Category);
+        var dto = await _db.Videos.Where(v => v.Id == id).Select(VideoMappings.ToDto).FirstOrDefaultAsync();
+        if (dto is null) throw AppException.NotFound("Khong tim thay video");
         return Ok(ApiResponse<VideoDto>.Ok(dto));
     }
 }

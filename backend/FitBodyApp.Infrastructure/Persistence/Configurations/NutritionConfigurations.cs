@@ -37,11 +37,12 @@ public class MealConfiguration : IEntityTypeConfiguration<Meal>
         builder.Property(x => x.ProteinG).HasColumnName("protein_g").HasColumnType("decimal(5,1)");
         builder.Property(x => x.CarbsG).HasColumnName("carbs_g").HasColumnType("decimal(5,1)");
         builder.Property(x => x.FatG).HasColumnName("fat_g").HasColumnType("decimal(5,1)");
-        builder.Property(x => x.ImageUrl).HasColumnName("image_url").HasMaxLength(255);
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
 
         builder.HasIndex(x => new { x.MealPlanId, x.MealType }).HasDatabaseName("idx_meals_plan_type");
 
         builder.HasOne(x => x.MealPlan).WithMany(x => x.Meals).HasForeignKey(x => x.MealPlanId);
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -56,10 +57,12 @@ public class FoodItemConfiguration : IEntityTypeConfiguration<FoodItem>
         builder.Property(x => x.ProteinG).HasColumnName("protein_g").HasColumnType("decimal(5,1)");
         builder.Property(x => x.CarbsG).HasColumnName("carbs_g").HasColumnType("decimal(5,1)");
         builder.Property(x => x.FatG).HasColumnName("fat_g").HasColumnType("decimal(5,1)");
-        builder.Property(x => x.ImageUrl).HasColumnName("image_url").HasMaxLength(255);
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
         builder.Property(x => x.Category).HasColumnName("category").HasMaxLength(50);
 
         builder.HasIndex(x => x.Name).HasDatabaseName("idx_food_items_name_fts").HasMethod("gin").HasOperators("gin_trgm_ops");
         builder.HasIndex(x => x.Category).HasDatabaseName("idx_food_items_category");
+
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }

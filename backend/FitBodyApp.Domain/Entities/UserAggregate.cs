@@ -15,12 +15,13 @@ public class User
     public decimal? WeightKg { get; set; }
     public FitnessGoal? FitnessGoal { get; set; }
     public ActivityLevel? ActivityLevel { get; set; }
-    public string? AvatarUrl { get; set; }
+    public Guid? AvatarImageId { get; set; }
     public UserStatus Status { get; set; } = UserStatus.Active;
     public UserRole Role { get; set; } = UserRole.User;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public ImageFile? AvatarImage { get; set; }
     public UserSetting? Settings { get; set; }
     public ICollection<AuthProvider> AuthProviders { get; set; } = new List<AuthProvider>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();

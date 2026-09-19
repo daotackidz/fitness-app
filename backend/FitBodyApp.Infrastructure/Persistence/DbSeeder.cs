@@ -101,7 +101,21 @@ public static class DbSeeder
 
         if (!await db.Videos.AnyAsync())
         {
-            db.Videos.Add(new Video { Id = Guid.NewGuid(), Title = "Huong dan Push Up dung ky thuat", VideoUrl = "https://example.com/video/push-up.mp4", DurationSeconds = 180, Category = "workout" });
+            var seedVideoFile = new VideoFile
+            {
+                Id = Guid.NewGuid(),
+                Url = "https://example.com/video/push-up.mp4",
+                BlobName = "seed-push-up",
+                Container = "external",
+                FileName = "push-up.mp4",
+                ContentType = "video/mp4",
+                SizeBytes = 0,
+                CreatedAt = DateTime.UtcNow
+            };
+            db.VideoFiles.Add(seedVideoFile);
+            await db.SaveChangesAsync();
+
+            db.Videos.Add(new Video { Id = Guid.NewGuid(), Title = "Huong dan Push Up dung ky thuat", VideoFileId = seedVideoFile.Id, DurationSeconds = 180, Category = "workout" });
             await db.SaveChangesAsync();
         }
 

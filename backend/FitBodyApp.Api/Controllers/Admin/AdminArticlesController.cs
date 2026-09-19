@@ -25,7 +25,7 @@ public class AdminArticlesController : ControllerBase
     {
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.Articles.OrderByDescending(a => a.PublishedAt)
-            .Select(a => new ArticleDto(a.Id, a.Title, a.Content, a.Category, a.CoverImage, a.Author, a.PublishedAt))
+            .Select(ArticleMappings.ToDto)
             .ToPagedResultAsync(paging.Page, paging.Limit);
         return Ok(ApiResponse<List<ArticleDto>>.Ok(items, meta));
     }
@@ -39,7 +39,7 @@ public class AdminArticlesController : ControllerBase
             Title = request.Title,
             Content = request.Content,
             Category = request.Category,
-            CoverImage = request.CoverImage,
+            CoverImageId = request.CoverImageId,
             Author = request.Author,
             PublishedAt = DateTime.UtcNow
         };
@@ -55,7 +55,7 @@ public class AdminArticlesController : ControllerBase
         article.Title = request.Title;
         article.Content = request.Content;
         article.Category = request.Category;
-        article.CoverImage = request.CoverImage;
+        article.CoverImageId = request.CoverImageId;
         article.Author = request.Author;
         await _db.SaveChangesAsync();
         return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));

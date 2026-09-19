@@ -41,6 +41,9 @@ public class FitBodyDbContext : DbContext
     public DbSet<AdminAuditLog> AdminAuditLogs => Set<AdminAuditLog>();
     public DbSet<ReportedContent> ReportedContents => Set<ReportedContent>();
 
+    public DbSet<VideoFile> VideoFiles => Set<VideoFile>();
+    public DbSet<ImageFile> ImageFiles => Set<ImageFile>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresExtension("pg_trgm");
