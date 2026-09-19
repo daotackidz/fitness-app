@@ -54,6 +54,21 @@ public class AdminSupportController : ControllerBase
         return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat trang thai thanh cong" }));
     }
 
+    [HttpGet("{id:guid}/messages")]
+    public async Task<IActionResult> GetMessages(Guid id, [FromQuery] int page = 1, [FromQuery] int limit = 50)
+    {
+        var exists = await _db.SupportTickets.AnyAsync(t => t.Id == id);
+        if (!exists) throw AppException.NotFound("Khong tim thay ticket");
+
+        var paging = new PagedRequest { Page = page, Limit = limit };
+        var (items, meta) = await _db.SupportMessages.Where(m => m.TicketId == id)
+            .OrderBy(m => m.SentAt)
+            .Select(m => new SupportMessageDto(m.Id, m.TicketId, m.SenderType.ToString(), m.Message, m.SentAt))
+            .ToPagedResultAsync(paging.Page, paging.Limit);
+
+        return Ok(ApiResponse<List<SupportMessageDto>>.Ok(items, meta));
+    }
+
     [HttpPost("{id:guid}/messages")]
     public async Task<IActionResult> Reply(Guid id, CreateSupportMessageRequest request)
     {

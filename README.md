@@ -30,7 +30,15 @@ dotnet run --project FitBodyApp.Api --urls "http://localhost:5080"
 ```
 
 - Swagger UI: http://localhost:5080/swagger
-- Connection string thuc te nam trong `backend/FitBodyApp.Api/appsettings.Development.json` (khong commit, tu tao theo mau bien moi truong cua ban).
+- Connection string va Azure Storage connection string thuc te nam trong
+  `backend/FitBodyApp.Api/appsettings.Development.json` (khong commit, tu tao theo mau bien moi truong cua ban):
+  ```json
+  {
+    "ConnectionStrings": { "DefaultConnection": "Host=localhost;Port=5432;Database=fitbody_dev;Username=postgres;Password=..." },
+    "Jwt": { "Issuer": "FitBodyApp", "Audience": "FitBodyApp.Clients", "Key": "...", "AccessTokenMinutes": 60, "RefreshTokenDays": 30 },
+    "AzureStorage": { "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net" }
+  }
+  ```
 - Khi chay o moi truong Development, `DbSeeder` tu dong:
   - Tao 1 tai khoan `super_admin` (email + mat khau in ra console log lan dau tien seed).
   - Seed du lieu mau: exercises, routines, meal plans, articles, videos, faqs.
@@ -52,10 +60,20 @@ ng serve
 ```bash
 cd mobile
 flutter pub get
-flutter run
+dart run build_runner build --delete-conflicting-outputs   # sinh code retrofit + json_serializable
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5080/api   # hoac -d <device_id> cho Android/iOS that
 ```
 
-(Se cap nhat chi tiet sau khi hoan tat trien khai.)
+- Kien truc feature-first: `lib/core/` (network/Dio+interceptor JWT tu refresh, secure storage, config),
+  `lib/features/<module>/{data,domain,presentation}` cho tung module (auth, workout, nutrition, content,
+  community, notification, support, profile, admin).
+- Mot app dung chung cho ca User va Admin/Moderator: sau khi dang nhap, neu `role != user` se hien them
+  tab **Quan tri** (dashboard rut gon, kiem duyet noi dung, ho tro khach hang realtime qua SignalR,
+  khoa/mo khoa nhanh 1 tai khoan). CRUD noi dung day du (exercises/routines/meal-plans/articles/videos/
+  faqs/challenges) va doi role CHI lam tren Admin Web, khong xay dung lai tren mobile.
+- Can Android SDK (Android Studio) hoac Xcode de build/chay tren thiet bi that; neu chua cai, dung
+  `-d chrome` de chay thu tren web trong luc phat trien.
+- Giao dien hien la Material co ban, se cap nhat theo Figma UI Kit sau.
 
 ## Tai khoan test
 
