@@ -3,8 +3,6 @@ backend/**/bin/
 backend/**/obj/
 *.user
 
-backend/FitBodyApp.Api/wwwroot/uploads/
-
 # secrets - never commit real connection strings/passwords
 backend/FitBodyApp.Api/appsettings.Development.json
 **/.env

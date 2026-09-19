@@ -9,10 +9,12 @@ namespace FitBodyApp.Infrastructure.Users;
 public class UserService : IUserService
 {
     private readonly FitBodyDbContext _db;
+    private readonly IBlobStorageService _blobStorage;
 
-    public UserService(FitBodyDbContext db)
+    public UserService(FitBodyDbContext db, IBlobStorageService blobStorage)
     {
         _db = db;
+        _blobStorage = blobStorage;
     }
 
     public async Task<UserProfileDto> GetProfileAsync(Guid userId)
@@ -42,22 +44,11 @@ public class UserService : IUserService
     {
         var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay nguoi dung");
 
-        // TODO: chuyen sang S3-compatible storage khi len production, hien luu local wwwroot cho moi truong dev
-        var uploadsDir = Path.Combine(AppContext.BaseDirectory, "wwwroot", "uploads", "avatars");
-        Directory.CreateDirectory(uploadsDir);
-        var ext = Path.GetExtension(fileName);
-        var savedFileName = $"{userId}{ext}";
-        var fullPath = Path.Combine(uploadsDir, savedFileName);
-
-        await using (var output = File.Create(fullPath))
-        {
-            await fileStream.CopyToAsync(output);
-        }
-
-        user.AvatarUrl = $"/uploads/avatars/{savedFileName}";
+        var url = await _blobStorage.UploadAsync(BlobContainers.Avatars, fileStream, fileName, null);
+        user.AvatarUrl = url;
         user.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
-        return user.AvatarUrl;
+        return url;
     }
 
     public async Task<UserSettingsDto> GetSettingsAsync(Guid userId)
