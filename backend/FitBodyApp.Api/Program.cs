@@ -1,8 +1,10 @@
 using System.Text;
 using FitBodyApp.Api.Middleware;
 using FitBodyApp.Application.Auth;
+using FitBodyApp.Application.Users;
 using FitBodyApp.Infrastructure.Auth;
 using FitBodyApp.Infrastructure.Persistence;
+using FitBodyApp.Infrastructure.Users;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +42,7 @@ builder.Services.AddDbContext<FitBodyDbContext>(options =>
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // TODO: chuyen sang Redis khi co san, hien dung IMemoryCache tam thoi
 builder.Services.AddMemoryCache();
@@ -83,6 +86,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseCors("AdminWebDev");
 
