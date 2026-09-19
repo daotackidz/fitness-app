@@ -1,0 +1,50 @@
+<h1>Dashboard</h1>
+
+@if (summary(); as s) {
+  <div class="stat-grid">
+    <mat-card class="stat-card">
+      <div class="stat-value">{{ s.totalUsers }}</div>
+      <div class="stat-label">Tong so nguoi dung</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-value">{{ s.newUsersToday }}</div>
+      <div class="stat-label">User moi hom nay</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-value">{{ s.newUsersThisWeek }}</div>
+      <div class="stat-label">User moi tuan nay</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-value">{{ s.openTickets }}</div>
+      <div class="stat-label">Ticket dang mo</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-value">{{ s.pendingReports }}</div>
+      <div class="stat-label">Report cho xu ly</div>
+    </mat-card>
+  </div>
+
+  <div class="top-grid">
+    <mat-card>
+      <mat-card-header><mat-card-title>Top Routine (theo luot tap)</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <ul>
+          @for (item of s.topRoutines; track item.id) {
+            <li>{{ item.name }} — {{ item.score }}</li>
+          }
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header><mat-card-title>Top Article (theo yeu thich)</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <ul>
+          @for (item of s.topArticles; track item.id) {
+            <li>{{ item.name }} — {{ item.score }}</li>
+          }
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}

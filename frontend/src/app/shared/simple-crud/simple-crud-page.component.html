@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h1>{{ config.title }}</h1>
+  <button mat-flat-button color="primary" (click)="openCreate()">
+    <mat-icon>add</mat-icon>
+    Them moi
+  </button>
+</div>
+
+<table mat-table [dataSource]="rows()" class="mat-elevation-z1 full-width">
+  @for (col of config.columns; track col.key) {
+    <ng-container [matColumnDef]="col.key">
+      <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
+      <td mat-cell *matCellDef="let row">{{ row[col.key] }}</td>
+    </ng-container>
+  }
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Hanh dong</th>
+    <td mat-cell *matCellDef="let row">
+      <button mat-icon-button (click)="openEdit(row)" aria-label="Sua">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="delete(row)" aria-label="Xoa">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+@if (meta(); as m) {
+  <mat-paginator
+    [length]="m.total"
+    [pageSize]="m.limit"
+    [pageIndex]="m.page - 1"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPage($event)">
+  </mat-paginator>
+}

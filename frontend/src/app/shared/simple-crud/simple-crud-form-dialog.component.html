@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ data.record ? 'Sua' : 'Them moi' }} {{ data.config.title }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content>
+    @for (field of data.config.fields; track field.key) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ field.label }}</mat-label>
+
+        @if (field.type === 'textarea') {
+          <textarea matInput [formControlName]="field.key" rows="3"></textarea>
+        } @else if (field.type === 'select') {
+          <mat-select [formControlName]="field.key">
+            @for (opt of field.options; track opt.value) {
+              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            }
+          </mat-select>
+        } @else {
+          <input matInput [type]="field.type" [formControlName]="field.key" />
+        }
+      </mat-form-field>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Huy</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Luu</button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,54 @@
+<h1>Kiem duyet noi dung</h1>
+
+<table mat-table [dataSource]="rows()" class="mat-elevation-z1 full-width">
+  <ng-container matColumnDef="reportableType">
+    <th mat-header-cell *matHeaderCellDef>Loai</th>
+    <td mat-cell *matCellDef="let row">{{ row.reportableType }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="reportableId">
+    <th mat-header-cell *matHeaderCellDef>ID noi dung</th>
+    <td mat-cell *matCellDef="let row">{{ row.reportableId }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="reason">
+    <th mat-header-cell *matHeaderCellDef>Ly do</th>
+    <td mat-cell *matCellDef="let row">{{ row.reason }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Trang thai</th>
+    <td mat-cell *matCellDef="let row">
+      <mat-select [value]="row.status.toLowerCase()" (selectionChange)="updateStatus(row, $event.value)">
+        <mat-option value="pending">pending</mat-option>
+        <mat-option value="reviewed">reviewed</mat-option>
+        <mat-option value="dismissed">dismissed</mat-option>
+      </mat-select>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef>Ngay bao cao</th>
+    <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'short' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Hanh dong</th>
+    <td mat-cell *matCellDef="let row">
+      <button mat-stroked-button color="warn" (click)="removeContent(row)">Go noi dung</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+@if (meta(); as m) {
+  <mat-paginator
+    [length]="m.total"
+    [pageSize]="m.limit"
+    [pageIndex]="m.page - 1"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPage($event)">
+  </mat-paginator>
+}

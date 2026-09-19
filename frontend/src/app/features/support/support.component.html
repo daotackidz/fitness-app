@@ -1,0 +1,46 @@
+<h1>Ho tro khach hang</h1>
+
+<div class="support-layout">
+  <div class="ticket-list">
+    <mat-nav-list>
+      @for (ticket of tickets(); track ticket.id) {
+        <a mat-list-item (click)="selectTicket(ticket)" [class.selected]="selectedTicket()?.id === ticket.id">
+          <span matListItemTitle>{{ ticket.subject }}</span>
+          <span matListItemLine>{{ ticket.userFullName }} — {{ ticket.status }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </div>
+
+  <div class="chat-panel">
+    @if (selectedTicket(); as ticket) {
+      <div class="chat-header">
+        <span>{{ ticket.subject }} ({{ ticket.userFullName }})</span>
+        <mat-form-field appearance="outline" class="status-select">
+          <mat-select [value]="ticket.status.toLowerCase()" (selectionChange)="updateStatus($event.value)">
+            <mat-option value="open">open</mat-option>
+            <mat-option value="pending">pending</mat-option>
+            <mat-option value="closed">closed</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="messages">
+        @for (msg of messages(); track msg.id) {
+          <div class="message" [class.agent]="msg.senderType.toLowerCase() === 'agent'">
+            <strong>{{ msg.senderType }}</strong>: {{ msg.message }}
+          </div>
+        }
+      </div>
+
+      <div class="reply-box">
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput [(ngModel)]="replyText" (keyup.enter)="sendReply()" placeholder="Nhap tin nhan tra loi..." />
+        </mat-form-field>
+        <button mat-flat-button color="primary" (click)="sendReply()">Gui</button>
+      </div>
+    } @else {
+      <p>Chon mot ticket de xem chi tiet</p>
+    }
+  </div>
+</div>
