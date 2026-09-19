@@ -15,7 +15,12 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ValidationFilter>();
-builder.Services.AddControllers(options => options.Filters.AddService<ValidationFilter>());
+builder.Services.AddScoped<AdminAuditLogFilter>();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.AddService<ValidationFilter>();
+    options.Filters.AddService<AdminAuditLogFilter>();
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
