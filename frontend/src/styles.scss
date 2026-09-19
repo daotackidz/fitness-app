@@ -48,3 +48,26 @@ body {
 .full-width {
   width: 100%;
 }
+
+.file-field {
+  margin-bottom: 16px;
+}
+
+.file-field-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 4px;
+}
+
+.file-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-preview-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+}

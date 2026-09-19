@@ -1,9 +1,10 @@
 export interface CrudFieldConfig {
   key: string;
   label: string;
-  type: 'text' | 'textarea' | 'number' | 'select' | 'date';
+  type: 'text' | 'textarea' | 'number' | 'select' | 'date' | 'file';
   options?: { value: string; label: string }[];
   required?: boolean;
+  uploadContainer?: string;
 }
 
 export interface CrudColumnConfig {

@@ -3,21 +3,36 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content>
     @for (field of data.config.fields; track field.key) {
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ field.label }}</mat-label>
-
-        @if (field.type === 'textarea') {
-          <textarea matInput [formControlName]="field.key" rows="3"></textarea>
-        } @else if (field.type === 'select') {
-          <mat-select [formControlName]="field.key">
-            @for (opt of field.options; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      @if (field.type === 'file') {
+        <div class="file-field">
+          <label class="file-field-label">{{ field.label }}</label>
+          <div class="file-field-row">
+            <input type="file" (change)="onFileSelected($event, field.key, field.uploadContainer!)" />
+            @if (isUploading(field.key)) {
+              <mat-spinner diameter="20"></mat-spinner>
             }
-          </mat-select>
-        } @else {
-          <input matInput [type]="field.type" [formControlName]="field.key" />
-        }
-      </mat-form-field>
+          </div>
+          @if (form.get(field.key)?.value) {
+            <a class="file-preview-link" [href]="form.get(field.key)?.value" target="_blank">Xem file da tai len</a>
+          }
+        </div>
+      } @else {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ field.label }}</mat-label>
+
+          @if (field.type === 'textarea') {
+            <textarea matInput [formControlName]="field.key" rows="3"></textarea>
+          } @else if (field.type === 'select') {
+            <mat-select [formControlName]="field.key">
+              @for (opt of field.options; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+          } @else {
+            <input matInput [type]="field.type" [formControlName]="field.key" />
+          }
+        </mat-form-field>
+      }
     }
   </mat-dialog-content>
 
