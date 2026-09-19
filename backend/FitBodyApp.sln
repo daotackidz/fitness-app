@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitBodyApp.Api", "FitBodyApp.Api\FitBodyApp.Api.csproj", "{415E6B53-4908-4665-A20A-0FF264E99031}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitBodyApp.Domain", "FitBodyApp.Domain\FitBodyApp.Domain.csproj", "{98EA059A-3B9F-481B-A481-A5D75555D7E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitBodyApp.Application", "FitBodyApp.Application\FitBodyApp.Application.csproj", "{AE43D3DA-B556-42F0-846D-81FE1A482297}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitBodyApp.Infrastructure", "FitBodyApp.Infrastructure\FitBodyApp.Infrastructure.csproj", "{982CD6F5-FF6C-4D9E-A483-8D7A145010A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{415E6B53-4908-4665-A20A-0FF264E99031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415E6B53-4908-4665-A20A-0FF264E99031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415E6B53-4908-4665-A20A-0FF264E99031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415E6B53-4908-4665-A20A-0FF264E99031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98EA059A-3B9F-481B-A481-A5D75555D7E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98EA059A-3B9F-481B-A481-A5D75555D7E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98EA059A-3B9F-481B-A481-A5D75555D7E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98EA059A-3B9F-481B-A481-A5D75555D7E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE43D3DA-B556-42F0-846D-81FE1A482297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE43D3DA-B556-42F0-846D-81FE1A482297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE43D3DA-B556-42F0-846D-81FE1A482297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE43D3DA-B556-42F0-846D-81FE1A482297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{982CD6F5-FF6C-4D9E-A483-8D7A145010A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{982CD6F5-FF6C-4D9E-A483-8D7A145010A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{982CD6F5-FF6C-4D9E-A483-8D7A145010A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{982CD6F5-FF6C-4D9E-A483-8D7A145010A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

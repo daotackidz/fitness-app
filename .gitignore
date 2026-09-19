@@ -1,0 +1,31 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+
+# secrets - never commit real connection strings/passwords
+backend/FitBodyApp.Api/appsettings.Development.json
+**/.env
+**/.env.*
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Flutter / Dart
+mobile/**/build/
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/**/*.g.dart
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
