@@ -27,7 +27,7 @@ public class ExceptionHandlingMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception");
-            await WriteError(context, 500, ErrorCodes.InternalError, "Da co loi xay ra, vui long thu lai sau");
+            await WriteError(context, 500, ErrorCodes.InternalError, "Đã có lỗi xảy ra, vui lòng thử lại sau");
         }
     }
 

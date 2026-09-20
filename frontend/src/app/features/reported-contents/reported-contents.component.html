@@ -1,41 +1,41 @@
-<h1>Kiem duyet noi dung</h1>
+<h1>Kiểm duyệt nội dung</h1>
 
-<table mat-table [dataSource]="rows()" class="mat-elevation-z1 full-width">
+<table mat-table [dataSource]="rows()" class="mat-elevation-z1 w-full">
   <ng-container matColumnDef="reportableType">
-    <th mat-header-cell *matHeaderCellDef>Loai</th>
+    <th mat-header-cell *matHeaderCellDef>Loại</th>
     <td mat-cell *matCellDef="let row">{{ row.reportableType }}</td>
   </ng-container>
 
   <ng-container matColumnDef="reportableId">
-    <th mat-header-cell *matHeaderCellDef>ID noi dung</th>
+    <th mat-header-cell *matHeaderCellDef>ID nội dung</th>
     <td mat-cell *matCellDef="let row">{{ row.reportableId }}</td>
   </ng-container>
 
   <ng-container matColumnDef="reason">
-    <th mat-header-cell *matHeaderCellDef>Ly do</th>
+    <th mat-header-cell *matHeaderCellDef>Lý do</th>
     <td mat-cell *matCellDef="let row">{{ row.reason }}</td>
   </ng-container>
 
   <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef>Trang thai</th>
+    <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
     <td mat-cell *matCellDef="let row">
-      <mat-select [value]="row.status.toLowerCase()" (selectionChange)="updateStatus(row, $event.value)">
-        <mat-option value="pending">pending</mat-option>
-        <mat-option value="reviewed">reviewed</mat-option>
-        <mat-option value="dismissed">dismissed</mat-option>
-      </mat-select>
+      <p-select
+        [options]="['pending', 'reviewed', 'dismissed']"
+        [ngModel]="row.status.toLowerCase()"
+        (ngModelChange)="updateStatus(row, $event)"
+        styleClass="!min-w-[130px]" />
     </td>
   </ng-container>
 
   <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef>Ngay bao cao</th>
+    <th mat-header-cell *matHeaderCellDef>Ngày báo cáo</th>
     <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'short' }}</td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Hanh dong</th>
+    <th mat-header-cell *matHeaderCellDef>Hành động</th>
     <td mat-cell *matCellDef="let row">
-      <button mat-stroked-button color="warn" (click)="removeContent(row)">Go noi dung</button>
+      <button mat-stroked-button color="warn" (click)="removeContent(row)">Gỡ nội dung</button>
     </td>
   </ng-container>
 

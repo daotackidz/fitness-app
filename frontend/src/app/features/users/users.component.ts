@@ -7,12 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
+import { Select } from 'primeng/select';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ApiResponse, PageMeta } from '../../core/models/api-response.model';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, normalizeRole } from '../../core/services/auth.service';
 
 interface AdminUser {
   id: string;
@@ -36,16 +38,19 @@ interface AdminUser {
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    RouterLink,
+    TranslatePipe,
+    Select
   ],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit {
   readonly rows = signal<AdminUser[]>([]);
   readonly meta = signal<PageMeta | null>(null);
   readonly displayedColumns = ['fullName', 'email', 'role', 'status', 'createdAt', 'actions'];
   searchTerm = '';
+  readonly normalizeRole = normalizeRole;
+  readonly roleOptions = ['user', 'moderator', 'admin', 'super_admin'];
 
   constructor(private http: HttpClient, public authService: AuthService) {}
 

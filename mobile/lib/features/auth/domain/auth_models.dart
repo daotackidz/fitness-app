@@ -11,6 +11,7 @@ class AuthUser {
   final String role;
   final String status;
   final String? avatarUrl;
+  final bool isProfileComplete;
 
   AuthUser({
     required this.id,
@@ -20,6 +21,7 @@ class AuthUser {
     required this.role,
     required this.status,
     this.avatarUrl,
+    this.isProfileComplete = false,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => _$AuthUserFromJson(json);

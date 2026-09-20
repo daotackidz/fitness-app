@@ -13,6 +13,12 @@ abstract class WorkoutApi {
   @GET('/routines')
   Future<HttpResponse<dynamic>> getRoutines(@Queries() Map<String, dynamic> query);
 
+  @GET('/routines/{id}')
+  Future<HttpResponse<dynamic>> getRoutineDetail(@Path('id') String id);
+
   @POST('/workout-logs')
   Future<HttpResponse<dynamic>> createWorkoutLog(@Body() Map<String, dynamic> body);
+
+  @POST('/favorites')
+  Future<HttpResponse<dynamic>> addFavorite(@Body() Map<String, dynamic> body);
 }

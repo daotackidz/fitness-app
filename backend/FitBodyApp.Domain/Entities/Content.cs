@@ -24,6 +24,8 @@ public class Video
     public Guid? ThumbnailImageId { get; set; }
     public int? DurationSeconds { get; set; }
     public string? Category { get; set; }
+    public int? CaloriesEstimate { get; set; }
+    public int? ExerciseCount { get; set; }
 
     public VideoFile VideoFile { get; set; } = null!;
     public ImageFile? ThumbnailImage { get; set; }

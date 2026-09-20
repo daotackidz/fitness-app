@@ -51,7 +51,9 @@ public class Challenge
     public DateOnly EndDate { get; set; }
     public string? GoalMetric { get; set; }
     public string? Reward { get; set; }
+    public Guid? ImageFileId { get; set; }
 
+    public ImageFile? ImageFile { get; set; }
     public ICollection<ChallengeParticipant> Participants { get; set; } = new List<ChallengeParticipant>();
 }
 

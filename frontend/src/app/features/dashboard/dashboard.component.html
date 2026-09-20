@@ -1,49 +1,76 @@
-<h1>Dashboard</h1>
+<h1>{{ 'dashboard.title' | translate }}</h1>
 
 @if (summary(); as s) {
-  <div class="stat-grid">
-    <mat-card class="stat-card">
-      <div class="stat-value">{{ s.totalUsers }}</div>
-      <div class="stat-label">Tong so nguoi dung</div>
+  <div class="grid gap-4 mb-6 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+    <mat-card class="text-center px-3 py-[18px] border-t-[3px] border-brand-lime bg-[var(--card-bg)]">
+      <div class="text-[30px] font-bold [font-variant-numeric:tabular-nums]" [style.color]="'var(--ink-primary)'">{{ s.totalUsers }}</div>
+      <div class="text-[13px] mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.totalUsers' | translate }}</div>
     </mat-card>
-    <mat-card class="stat-card">
-      <div class="stat-value">{{ s.newUsersToday }}</div>
-      <div class="stat-label">User moi hom nay</div>
+    <mat-card class="text-center px-3 py-[18px] border-t-[3px] border-brand-lime bg-[var(--card-bg)]">
+      <div class="text-[30px] font-bold [font-variant-numeric:tabular-nums]" [style.color]="'var(--ink-primary)'">{{ s.newUsersToday }}</div>
+      <div class="text-[13px] mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.newUsersToday' | translate }}</div>
     </mat-card>
-    <mat-card class="stat-card">
-      <div class="stat-value">{{ s.newUsersThisWeek }}</div>
-      <div class="stat-label">User moi tuan nay</div>
+    <mat-card class="text-center px-3 py-[18px] border-t-[3px] border-brand-lime bg-[var(--card-bg)]">
+      <div class="text-[30px] font-bold [font-variant-numeric:tabular-nums]" [style.color]="'var(--ink-primary)'">{{ s.newUsersThisWeek }}</div>
+      <div class="text-[13px] mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.newUsersThisWeek' | translate }}</div>
     </mat-card>
-    <mat-card class="stat-card">
-      <div class="stat-value">{{ s.openTickets }}</div>
-      <div class="stat-label">Ticket dang mo</div>
+    <mat-card class="text-center px-3 py-[18px] border-t-[3px] border-brand-lime bg-[var(--card-bg)]">
+      <div class="text-[30px] font-bold [font-variant-numeric:tabular-nums]" [style.color]="'var(--ink-primary)'">{{ s.openTickets }}</div>
+      <div class="text-[13px] mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.openTickets' | translate }}</div>
     </mat-card>
-    <mat-card class="stat-card">
-      <div class="stat-value">{{ s.pendingReports }}</div>
-      <div class="stat-label">Report cho xu ly</div>
+    <mat-card class="text-center px-3 py-[18px] border-t-[3px] border-brand-lime bg-[var(--card-bg)]">
+      <div class="text-[30px] font-bold [font-variant-numeric:tabular-nums]" [style.color]="'var(--ink-primary)'">{{ s.pendingReports }}</div>
+      <div class="text-[13px] mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.pendingReports' | translate }}</div>
     </mat-card>
   </div>
 
-  <div class="top-grid">
-    <mat-card>
-      <mat-card-header><mat-card-title>Top Routine (theo luot tap)</mat-card-title></mat-card-header>
+  <div class="grid gap-4 mb-4 grid-cols-2 max-[900px]:grid-cols-1">
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.userGrowth' | translate }}</mat-card-title></mat-card-header>
       <mat-card-content>
-        <ul>
-          @for (item of s.topRoutines; track item.id) {
-            <li>{{ item.name }} — {{ item.score }}</li>
-          }
-        </ul>
+        <app-line-chart [points]="userGrowth()" color="#2a78d6"></app-line-chart>
       </mat-card-content>
     </mat-card>
 
-    <mat-card>
-      <mat-card-header><mat-card-title>Top Article (theo yeu thich)</mat-card-title></mat-card-header>
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.workoutActivity' | translate }}</mat-card-title></mat-card-header>
       <mat-card-content>
-        <ul>
-          @for (item of s.topArticles; track item.id) {
-            <li>{{ item.name }} — {{ item.score }}</li>
-          }
-        </ul>
+        <app-line-chart [points]="workoutActivity()" color="#1baf7a"></app-line-chart>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="grid gap-4 mb-4 grid-cols-2 max-[900px]:grid-cols-1">
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.contentDistribution' | translate }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <app-bar-chart [items]="contentDistribution()"></app-bar-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.ticketReportStatus' | translate }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <p class="text-xs font-semibold mb-2 mt-1" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.supportTicket' | translate }}</p>
+        <app-bar-chart [items]="ticketStatus()" emptyLabel="Chưa có ticket"></app-bar-chart>
+        <p class="text-xs font-semibold mb-2 mt-5" [style.color]="'var(--ink-secondary)'">{{ 'dashboard.reportedContent' | translate }}</p>
+        <app-bar-chart [items]="reportStatus()" emptyLabel="Chưa có report"></app-bar-chart>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="grid gap-4 mb-4 grid-cols-2 max-[900px]:grid-cols-1">
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.topRoutines' | translate }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <app-bar-chart [items]="topRoutines()"></app-bar-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="bg-[var(--card-bg)]">
+      <mat-card-header><mat-card-title>{{ 'dashboard.topArticles' | translate }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <app-bar-chart [items]="topArticles()"></app-bar-chart>
       </mat-card-content>
     </mat-card>
   </div>

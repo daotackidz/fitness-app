@@ -50,19 +50,19 @@ public class AdminMealPlansController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertMealPlanRequest request)
     {
-        var plan = await _db.MealPlans.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay meal plan");
+        var plan = await _db.MealPlans.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy meal plan");
         plan.Name = request.Name;
         plan.Goal = request.Goal;
         plan.Description = request.Description;
         plan.TotalCalories = request.TotalCalories;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var plan = await _db.MealPlans.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay meal plan");
+        var plan = await _db.MealPlans.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy meal plan");
         _db.MealPlans.Remove(plan);
         await _db.SaveChangesAsync();
         return NoContent();

@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Tailwind v4 defaults its `dark:` variant to prefers-color-scheme; this
+   repoints it to the same `.dark` class ThemeService toggles on <html>,
+   so `dark:` utilities and the app's own CSS-variable-based dark mode
+   (styles.scss) and PrimeNG's theme (darkModeSelector: '.dark' in
+   app.config.ts) all agree on one source of truth. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Fixed brand colors (login/register screens, sidebar logo mark) as
+   Tailwind theme tokens, so utilities like `bg-brand-dark` / `text-brand-lime`
+   are available. These never change with the light/dark toggle - values that
+   DO change with it (ink/page/card/sidenav-* etc, defined in styles.scss)
+   are referenced directly as CSS vars, e.g. `bg-[var(--page-bg)]`, since
+   they're already wired to the same `.dark` class. */
+@theme {
+  --color-brand-dark: #201a2c;
+  --color-brand-dark-2: #2b2438;
+  --color-brand-lavender: #b9a9f2;
+  --color-brand-lavender-soft: #ece7fb;
+  --color-brand-lime: #d6f84c;
+  --color-brand-lime-dark: #b9da2e;
+}

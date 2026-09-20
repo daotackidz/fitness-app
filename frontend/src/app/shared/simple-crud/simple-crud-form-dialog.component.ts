@@ -7,8 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { Select } from 'primeng/select';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../core/models/api-response.model';
@@ -28,10 +27,9 @@ export interface SimpleCrudDialogData {
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    Select
   ],
   templateUrl: './simple-crud-form-dialog.component.html'
 })
@@ -39,6 +37,7 @@ export class SimpleCrudFormDialogComponent {
   readonly form: FormGroup;
   readonly uploadingFields = signal<Record<string, boolean>>({});
   readonly previewUrls = signal<Record<string, string | null>>({});
+  readonly dynamicOptions = signal<Record<string, { value: string; label: string }[]>>({});
 
   constructor(
     private fb: FormBuilder,
@@ -54,9 +53,25 @@ export class SimpleCrudFormDialogComponent {
       if (field.type === 'file' && field.previewUrlKey) {
         initialPreviews[field.key] = data.record?.[field.previewUrlKey] ?? null;
       }
+      if (field.type === 'select' && field.optionsEndpoint) {
+        this.loadOptions(field.key, field.optionsEndpoint);
+      }
     }
     this.form = this.fb.group(group);
     this.previewUrls.set(initialPreviews);
+  }
+
+  optionsFor(field: { options?: { value: string; label: string }[]; optionsEndpoint?: string }, key: string): { value: string; label: string }[] {
+    if (field.options) return field.options;
+    return this.dynamicOptions()[key] ?? [];
+  }
+
+  private async loadOptions(key: string, endpoint: string): Promise<void> {
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<{ name: string }[]>>(`${environment.apiBaseUrl}/${endpoint}`)
+    );
+    const options = (response.data ?? []).map((item) => ({ value: item.name, label: item.name }));
+    this.dynamicOptions.update((state) => ({ ...state, [key]: options }));
   }
 
   isUploading(key: string): boolean {

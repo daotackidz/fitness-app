@@ -37,7 +37,7 @@ public class VideosController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var dto = await _db.Videos.Where(v => v.Id == id).Select(VideoMappings.ToDto).FirstOrDefaultAsync();
-        if (dto is null) throw AppException.NotFound("Khong tim thay video");
+        if (dto is null) throw AppException.NotFound("Không tìm thấy video");
         return Ok(ApiResponse<VideoDto>.Ok(dto));
     }
 }

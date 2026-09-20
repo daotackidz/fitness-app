@@ -73,8 +73,10 @@ public class ChallengeConfiguration : IEntityTypeConfiguration<Challenge>
         builder.Property(x => x.EndDate).HasColumnName("end_date");
         builder.Property(x => x.GoalMetric).HasColumnName("goal_metric").HasMaxLength(100);
         builder.Property(x => x.Reward).HasColumnName("reward").HasMaxLength(150);
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
 
         builder.HasIndex(x => new { x.Type, x.StartDate, x.EndDate }).HasDatabaseName("idx_challenges_type_dates");
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

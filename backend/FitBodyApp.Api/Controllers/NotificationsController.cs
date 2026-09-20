@@ -38,11 +38,11 @@ public class NotificationsController : ControllerBase
     {
         var userId = User.GetUserId();
         var notification = await _db.Notifications.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId)
-            ?? throw AppException.NotFound("Khong tim thay thong bao");
+            ?? throw AppException.NotFound("Không tìm thấy thông báo");
 
         notification.IsRead = request.IsRead;
         await _db.SaveChangesAsync();
 
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 }

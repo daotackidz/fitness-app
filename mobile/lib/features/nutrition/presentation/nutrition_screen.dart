@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/network/dio_client.dart';
 import '../data/nutrition_api.dart';
 
@@ -17,12 +18,13 @@ class NutritionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mealPlansAsync = ref.watch(mealPlansProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dinh duong')),
+      appBar: AppBar(title: Text(l10n.t('nutrition.title'))),
       body: mealPlansAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('Loi tai du lieu: $err')),
+        error: (err, _) => Center(child: Text(l10n.t('common.error.loadFailed', {'error': err.toString()}))),
         data: (plans) => ListView.separated(
           itemCount: plans.length,
           separatorBuilder: (_, _) => const Divider(height: 1),
@@ -30,7 +32,7 @@ class NutritionScreen extends ConsumerWidget {
             final p = plans[index];
             return ListTile(
               title: Text(p['name'] as String),
-              subtitle: Text('Muc tieu: ${p['goal'] ?? '-'}'),
+              subtitle: Text(l10n.t('nutrition.goalLabel', {'goal': '${p['goal'] ?? '-'}'})),
               trailing: p['totalCalories'] != null ? Text('${p['totalCalories']} kcal') : null,
             );
           },

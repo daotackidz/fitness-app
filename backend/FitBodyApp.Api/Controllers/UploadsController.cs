@@ -23,10 +23,10 @@ public class UploadsController : ControllerBase
     public async Task<IActionResult> Upload(IFormFile file, [FromQuery] string container, [FromQuery] string type)
     {
         if (!BlobContainers.UserAllowed.Contains(container))
-            throw AppException.ValidationError($"Container khong hop le. Cho phep: {string.Join(", ", BlobContainers.UserAllowed)}");
+            throw AppException.ValidationError($"Container không hợp lệ. Cho phép: {string.Join(", ", BlobContainers.UserAllowed)}");
 
         if (!Enum.TryParse<MediaKind>(type, true, out var mediaKind))
-            throw AppException.ValidationError("type phai la 'video' hoac 'image'");
+            throw AppException.ValidationError("type phải là 'video' hoặc 'image'");
 
         await using var stream = file.OpenReadStream();
         var uploadResult = await _blobStorage.UploadAsync(container, stream, file.FileName, file.ContentType);

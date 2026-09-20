@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/network/auth_token_holder.dart';
 import '../../../core/network/support_hub_connection.dart';
 import 'admin_providers.dart';
@@ -60,6 +61,8 @@ class _AdminTicketChatScreenState extends ConsumerState<AdminTicketChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.subject)),
       body: Column(
@@ -96,7 +99,7 @@ class _AdminTicketChatScreenState extends ConsumerState<AdminTicketChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _textController,
-                      decoration: const InputDecoration(hintText: 'Tra loi khach hang...', border: OutlineInputBorder()),
+                      decoration: InputDecoration(hintText: l10n.t('admin.ticketChat.replyHint'), border: const OutlineInputBorder()),
                       onSubmitted: (_) => _send(),
                     ),
                   ),

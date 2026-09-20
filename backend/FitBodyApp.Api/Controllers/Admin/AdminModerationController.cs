@@ -37,19 +37,19 @@ public class AdminModerationController : ControllerBase
     public async Task<IActionResult> UpdateReportStatus(Guid id, UpdateReportedContentStatusRequest request)
     {
         if (!Enum.TryParse<ReportStatus>(request.Status, true, out var status))
-            throw AppException.ValidationError("status khong hop le");
+            throw AppException.ValidationError("status không hợp lệ");
 
-        var report = await _db.ReportedContents.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bao cao");
+        var report = await _db.ReportedContents.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy báo cáo");
         report.Status = status;
         await _db.SaveChangesAsync();
 
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat trang thai thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật trạng thái thành công" }));
     }
 
     [HttpDelete("api/admin/forum-posts/{id:guid}")]
     public async Task<IActionResult> DeleteForumPost(Guid id)
     {
-        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai dang");
+        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài đăng");
         _db.ForumPosts.Remove(post);
         await _db.SaveChangesAsync();
         return NoContent();
@@ -58,7 +58,7 @@ public class AdminModerationController : ControllerBase
     [HttpDelete("api/admin/comments/{id:guid}")]
     public async Task<IActionResult> DeleteComment(Guid id)
     {
-        var comment = await _db.Comments.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay binh luan");
+        var comment = await _db.Comments.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bình luận");
         _db.Comments.Remove(comment);
         await _db.SaveChangesAsync();
         return NoContent();

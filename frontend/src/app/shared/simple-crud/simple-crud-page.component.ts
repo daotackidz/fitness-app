@@ -80,7 +80,7 @@ export class SimpleCrudPageComponent implements OnInit {
   }
 
   async delete(row: Record<string, any>): Promise<void> {
-    if (!confirm('Xoa muc nay?')) return;
+    if (!confirm('Xóa mục này?')) return;
 
     await firstValueFrom(this.http.delete(`${environment.apiBaseUrl}/${this.config.resourcePath}/${row['id']}`));
     this.load(this.meta()?.page ?? 1, this.meta()?.limit ?? 20);

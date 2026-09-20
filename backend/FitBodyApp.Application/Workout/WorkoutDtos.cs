@@ -4,7 +4,7 @@ using FitBodyApp.Domain.Entities;
 namespace FitBodyApp.Application.Workout;
 
 public record ExerciseDto(Guid Id, string Name, string? Description, string? MuscleGroup, string? Equipment,
-    string DifficultyLevel, string? VideoUrl, string? ImageUrl, int? CaloriesEstimate,
+    string DifficultyLevel, string? VideoUrl, string? ImageUrl, int? CaloriesEstimate, int? DurationMinutes,
     Guid? VideoFileId, Guid? ImageFileId);
 
 public static class ExerciseMappings
@@ -13,18 +13,21 @@ public static class ExerciseMappings
         e.Id, e.Name, e.Description, e.MuscleGroup, e.Equipment, e.DifficultyLevel.ToString(),
         e.VideoFile != null ? e.VideoFile.Url : null,
         e.ImageFile != null ? e.ImageFile.Url : null,
-        e.CaloriesEstimate, e.VideoFileId, e.ImageFileId);
+        e.CaloriesEstimate, e.DurationMinutes, e.VideoFileId, e.ImageFileId);
 }
 
-public record RoutineExerciseDto(Guid ExerciseId, string ExerciseName, int Sets, int Reps, int RestSeconds, int OrderIndex);
+public record RoutineExerciseDto(Guid ExerciseId, string ExerciseName, int Sets, int Reps, int RestSeconds, int OrderIndex,
+    int RoundNumber, int? DurationSeconds, string? ImageUrl, string? Description, int? CaloriesEstimate, string DifficultyLevel);
 
 public record RoutineDto(Guid Id, string Name, string Level, string? Description, int? DurationWeeks, bool IsCustom,
-    Guid? CreatedByUserId, List<RoutineExerciseDto>? Exercises);
+    Guid? CreatedByUserId, string? ImageUrl, int? DurationMinutes, int? CaloriesEstimate, int ExerciseCount,
+    bool IsFeatured, bool IsFavorited, List<RoutineExerciseDto>? Exercises);
 
 public record CreateRoutineRequest(string Name, string Level, string? Description, int? DurationWeeks,
     List<CreateRoutineExerciseItem> Exercises);
 
-public record CreateRoutineExerciseItem(Guid ExerciseId, int Sets, int Reps, int RestSeconds, int OrderIndex);
+public record CreateRoutineExerciseItem(Guid ExerciseId, int Sets, int Reps, int RestSeconds, int OrderIndex,
+    int RoundNumber, int? DurationSeconds);
 
 public record UpdateRoutineRequest(string? Name, string? Description, int? DurationWeeks);
 

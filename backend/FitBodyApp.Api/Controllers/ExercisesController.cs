@@ -48,7 +48,7 @@ public class ExercisesController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var dto = await _db.Exercises.Where(e => e.Id == id).Select(ExerciseMappings.ToDto).FirstOrDefaultAsync();
-        if (dto is null) throw AppException.NotFound("Khong tim thay bai tap");
+        if (dto is null) throw AppException.NotFound("Không tìm thấy bài tập");
 
         return Ok(ApiResponse<ExerciseDto>.Ok(dto));
     }

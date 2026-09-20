@@ -22,7 +22,7 @@ public class SearchController : ControllerBase
     public async Task<IActionResult> Search([FromQuery] string q, [FromQuery] string type = "all")
     {
         if (string.IsNullOrWhiteSpace(q))
-            throw AppException.ValidationError("Query 'q' khong duoc de trong");
+            throw AppException.ValidationError("Query 'q' không được để trống");
 
         var result = new Dictionary<string, object>();
 

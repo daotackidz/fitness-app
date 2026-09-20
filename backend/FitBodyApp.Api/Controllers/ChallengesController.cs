@@ -31,7 +31,8 @@ public class ChallengesController : ControllerBase
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await query.OrderBy(c => c.StartDate)
-            .Select(c => new ChallengeDto(c.Id, c.Name, c.Description, c.Type.ToString(), c.StartDate, c.EndDate, c.GoalMetric, c.Reward, null))
+            .Select(c => new ChallengeDto(c.Id, c.Name, c.Description, c.Type.ToString(), c.StartDate, c.EndDate, c.GoalMetric, c.Reward,
+                c.ImageFile != null ? c.ImageFile.Url : null, null))
             .ToPagedResultAsync(paging.Page, paging.Limit);
 
         return Ok(ApiResponse<List<ChallengeDto>>.Ok(items, meta));
@@ -42,14 +43,16 @@ public class ChallengesController : ControllerBase
     {
         var challenge = await _db.Challenges
             .Include(c => c.Participants).ThenInclude(p => p.User)
-            .FirstOrDefaultAsync(c => c.Id == id) ?? throw AppException.NotFound("Khong tim thay thu thach");
+            .Include(c => c.ImageFile)
+            .FirstOrDefaultAsync(c => c.Id == id) ?? throw AppException.NotFound("Không tìm thấy thử thách");
 
         var leaderboard = challenge.Participants.OrderByDescending(p => p.Progress)
             .Select(p => new ChallengeParticipantDto(p.UserId, p.User.FullName, p.Progress, p.Rank, p.JoinedAt))
             .ToList();
 
         var dto = new ChallengeDto(challenge.Id, challenge.Name, challenge.Description, challenge.Type.ToString(),
-            challenge.StartDate, challenge.EndDate, challenge.GoalMetric, challenge.Reward, leaderboard);
+            challenge.StartDate, challenge.EndDate, challenge.GoalMetric, challenge.Reward,
+            challenge.ImageFile != null ? challenge.ImageFile.Url : null, leaderboard);
         return Ok(ApiResponse<ChallengeDto>.Ok(dto));
     }
 
@@ -57,11 +60,11 @@ public class ChallengesController : ControllerBase
     public async Task<IActionResult> Join(Guid id)
     {
         var exists = await _db.Challenges.AnyAsync(c => c.Id == id);
-        if (!exists) throw AppException.NotFound("Khong tim thay thu thach");
+        if (!exists) throw AppException.NotFound("Không tìm thấy thử thách");
 
         var userId = User.GetUserId();
         var already = await _db.ChallengeParticipants.AnyAsync(p => p.ChallengeId == id && p.UserId == userId);
-        if (already) throw AppException.Conflict("Ban da tham gia thu thach nay roi");
+        if (already) throw AppException.Conflict("Bạn đã tham gia thử thách này rồi");
 
         var participant = new ChallengeParticipant
         {
@@ -82,7 +85,7 @@ public class ChallengesController : ControllerBase
     {
         var userId = User.GetUserId();
         var participant = await _db.ChallengeParticipants.FirstOrDefaultAsync(p => p.ChallengeId == id && p.UserId == userId)
-            ?? throw AppException.NotFound("Ban chua tham gia thu thach nay");
+            ?? throw AppException.NotFound("Bạn chưa tham gia thử thách này");
 
         participant.Progress = request.Progress;
         await _db.SaveChangesAsync();

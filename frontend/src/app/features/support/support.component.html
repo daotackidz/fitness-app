@@ -1,10 +1,14 @@
-<h1>Ho tro khach hang</h1>
+<h1>Hỗ trợ khách hàng</h1>
 
-<div class="support-layout">
-  <div class="ticket-list">
+<div class="flex gap-4 h-[calc(100vh-160px)]">
+  <div class="w-[280px] overflow-y-auto border-r" [style.borderColor]="'var(--gridline)'">
     <mat-nav-list>
       @for (ticket of tickets(); track ticket.id) {
-        <a mat-list-item (click)="selectTicket(ticket)" [class.selected]="selectedTicket()?.id === ticket.id">
+        <a
+          mat-list-item
+          (click)="selectTicket(ticket)"
+          [class.font-semibold]="selectedTicket()?.id === ticket.id"
+          [style.background]="selectedTicket()?.id === ticket.id ? 'var(--sidenav-hover)' : 'transparent'">
           <span matListItemTitle>{{ ticket.subject }}</span>
           <span matListItemLine>{{ ticket.userFullName }} — {{ ticket.status }}</span>
         </a>
@@ -12,35 +16,34 @@
     </mat-nav-list>
   </div>
 
-  <div class="chat-panel">
+  <div class="flex-1 flex flex-col min-w-0">
     @if (selectedTicket(); as ticket) {
-      <div class="chat-header">
+      <div class="flex items-center justify-between pb-2 border-b" [style.borderColor]="'var(--gridline)'">
         <span>{{ ticket.subject }} ({{ ticket.userFullName }})</span>
-        <mat-form-field appearance="outline" class="status-select">
-          <mat-select [value]="ticket.status.toLowerCase()" (selectionChange)="updateStatus($event.value)">
-            <mat-option value="open">open</mat-option>
-            <mat-option value="pending">pending</mat-option>
-            <mat-option value="closed">closed</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <p-select
+          [options]="['open', 'pending', 'closed']"
+          [ngModel]="ticket.status.toLowerCase()"
+          (ngModelChange)="updateStatus($event)"
+          styleClass="!min-w-[130px]" />
       </div>
 
-      <div class="messages">
+      <div class="flex-1 overflow-y-auto py-3">
         @for (msg of messages(); track msg.id) {
-          <div class="message" [class.agent]="msg.senderType.toLowerCase() === 'agent'">
-            <strong>{{ msg.senderType }}</strong>: {{ msg.message }}
+          <div class="mb-2" [class.text-right]="msg.senderType.toLowerCase() === 'agent'">
+            <strong [style.color]="msg.senderType.toLowerCase() === 'agent' ? 'var(--sidenav-accent)' : 'inherit'">{{ msg.senderType }}</strong
+            >: {{ msg.message }}
           </div>
         }
       </div>
 
-      <div class="reply-box">
-        <mat-form-field appearance="outline" class="full-width">
-          <input matInput [(ngModel)]="replyText" (keyup.enter)="sendReply()" placeholder="Nhap tin nhan tra loi..." />
+      <div class="flex items-center gap-2">
+        <mat-form-field appearance="outline" class="w-full">
+          <input matInput [(ngModel)]="replyText" (keyup.enter)="sendReply()" placeholder="Nhập tin nhắn trả lời..." />
         </mat-form-field>
-        <button mat-flat-button color="primary" (click)="sendReply()">Gui</button>
+        <button mat-flat-button color="primary" (click)="sendReply()">Gửi</button>
       </div>
     } @else {
-      <p>Chon mot ticket de xem chi tiet</p>
+      <p>Chọn một ticket để xem chi tiết</p>
     }
   </div>
 </div>

@@ -44,6 +44,8 @@ public class FitBodyDbContext : DbContext
     public DbSet<VideoFile> VideoFiles => Set<VideoFile>();
     public DbSet<ImageFile> ImageFiles => Set<ImageFile>();
 
+    public DbSet<Category> Categories => Set<Category>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresExtension("pg_trgm");

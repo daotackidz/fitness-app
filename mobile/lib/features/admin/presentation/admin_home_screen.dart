@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import 'admin_dashboard_screen.dart';
 import 'admin_reported_contents_screen.dart';
 import 'admin_support_screen.dart';
@@ -13,18 +14,20 @@ class AdminHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Quan tri'),
-          bottom: const TabBar(
+          title: Text(l10n.t('admin.home.title')),
+          bottom: TabBar(
             isScrollable: true,
             tabs: [
-              Tab(text: 'Dashboard'),
-              Tab(text: 'Kiem duyet'),
-              Tab(text: 'Ho tro'),
-              Tab(text: 'Nguoi dung'),
+              Tab(text: l10n.t('admin.home.tab.dashboard')),
+              Tab(text: l10n.t('admin.home.tab.moderation')),
+              Tab(text: l10n.t('admin.home.tab.support')),
+              Tab(text: l10n.t('admin.home.tab.users')),
             ],
           ),
         ),

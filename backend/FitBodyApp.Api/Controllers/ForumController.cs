@@ -57,7 +57,7 @@ public class ForumController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var dto = await _db.ForumPosts.Where(p => p.Id == id).Select(ForumPostMappings.ToDto).FirstOrDefaultAsync();
-        if (dto is null) throw AppException.NotFound("Khong tim thay bai dang");
+        if (dto is null) throw AppException.NotFound("Không tìm thấy bài đăng");
         return Ok(ApiResponse<ForumPostDto>.Ok(dto));
     }
 
@@ -65,10 +65,10 @@ public class ForumController : ControllerBase
     public async Task<IActionResult> Like(Guid id)
     {
         var userId = User.GetUserId();
-        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai dang");
+        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài đăng");
 
         var already = await _db.PostLikes.AnyAsync(l => l.PostId == id && l.UserId == userId);
-        if (already) throw AppException.Conflict("Ban da thich bai dang nay roi");
+        if (already) throw AppException.Conflict("Bạn đã thích bài đăng này rồi");
 
         _db.PostLikes.Add(new PostLike { Id = Guid.NewGuid(), PostId = id, UserId = userId, CreatedAt = DateTime.UtcNow });
         post.LikesCount += 1;
@@ -81,10 +81,10 @@ public class ForumController : ControllerBase
     public async Task<IActionResult> Unlike(Guid id)
     {
         var userId = User.GetUserId();
-        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai dang");
+        var post = await _db.ForumPosts.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài đăng");
 
         var like = await _db.PostLikes.FirstOrDefaultAsync(l => l.PostId == id && l.UserId == userId)
-            ?? throw AppException.NotFound("Ban chua thich bai dang nay");
+            ?? throw AppException.NotFound("Bạn chưa thích bài đăng này");
 
         _db.PostLikes.Remove(like);
         post.LikesCount = Math.Max(0, post.LikesCount - 1);
@@ -97,7 +97,7 @@ public class ForumController : ControllerBase
     public async Task<IActionResult> AddComment(Guid id, CreateCommentRequest request)
     {
         var exists = await _db.ForumPosts.AnyAsync(p => p.Id == id);
-        if (!exists) throw AppException.NotFound("Khong tim thay bai dang");
+        if (!exists) throw AppException.NotFound("Không tìm thấy bài đăng");
 
         var comment = new Comment
         {

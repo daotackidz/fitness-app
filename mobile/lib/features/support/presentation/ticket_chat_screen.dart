@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/network/auth_token_holder.dart';
 import '../../../core/network/support_hub_connection.dart';
 import 'support_providers.dart';
@@ -96,7 +97,10 @@ class _TicketChatScreenState extends ConsumerState<TicketChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _textController,
-                      decoration: const InputDecoration(hintText: 'Nhap tin nhan...', border: OutlineInputBorder()),
+                      decoration: InputDecoration(
+                        hintText: context.l10n.t('support.chat.messageHint'),
+                        border: const OutlineInputBorder(),
+                      ),
                       onSubmitted: (_) => _send(),
                     ),
                   ),

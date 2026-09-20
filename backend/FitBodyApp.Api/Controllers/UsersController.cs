@@ -32,6 +32,13 @@ public class UsersController : ControllerBase
         return Ok(ApiResponse<UserProfileDto>.Ok(profile));
     }
 
+    [HttpPost("me/onboarding")]
+    public async Task<IActionResult> CompleteOnboarding(CompleteOnboardingRequest request)
+    {
+        var profile = await _userService.CompleteOnboardingAsync(User.GetUserId(), request);
+        return Ok(ApiResponse<UserProfileDto>.Ok(profile));
+    }
+
     [HttpPost("me/avatar")]
     public async Task<IActionResult> UploadAvatar(IFormFile file)
     {
@@ -58,13 +65,13 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
     {
         await _userService.ChangePasswordAsync(User.GetUserId(), request);
-        return Ok(ApiResponse<object>.Ok(new { message = "Doi mat khau thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Đổi mật khẩu thành công" }));
     }
 
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteMe()
     {
         await _userService.DeleteAccountAsync(User.GetUserId());
-        return Ok(ApiResponse<object>.Ok(new { message = "Da xoa tai khoan" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Đã xóa tài khoản" }));
     }
 }

@@ -38,7 +38,7 @@ public class FoodsController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var dto = await _db.FoodItems.Where(f => f.Id == id).Select(FoodItemMappings.ToDto).FirstOrDefaultAsync();
-        if (dto is null) throw AppException.NotFound("Khong tim thay thuc pham");
+        if (dto is null) throw AppException.NotFound("Không tìm thấy thực phẩm");
         return Ok(ApiResponse<FoodItemDto>.Ok(dto));
     }
 }

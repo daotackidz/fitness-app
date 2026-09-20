@@ -41,7 +41,9 @@ public class AdminVideosController : ControllerBase
             VideoFileId = request.VideoFileId,
             ThumbnailImageId = request.ThumbnailImageId,
             DurationSeconds = request.DurationSeconds,
-            Category = request.Category
+            Category = request.Category,
+            CaloriesEstimate = request.CaloriesEstimate,
+            ExerciseCount = request.ExerciseCount
         };
         _db.Videos.Add(video);
         await _db.SaveChangesAsync();
@@ -51,21 +53,23 @@ public class AdminVideosController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertVideoRequest request)
     {
-        var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay video");
+        var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy video");
         video.Title = request.Title;
         video.Description = request.Description;
         video.VideoFileId = request.VideoFileId;
         video.ThumbnailImageId = request.ThumbnailImageId;
         video.DurationSeconds = request.DurationSeconds;
         video.Category = request.Category;
+        video.CaloriesEstimate = request.CaloriesEstimate;
+        video.ExerciseCount = request.ExerciseCount;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay video");
+        var video = await _db.Videos.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy video");
         _db.Videos.Remove(video);
         await _db.SaveChangesAsync();
         return NoContent();

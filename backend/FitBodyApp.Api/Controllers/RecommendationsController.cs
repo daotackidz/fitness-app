@@ -25,7 +25,7 @@ public class RecommendationsController : ControllerBase
     public async Task<IActionResult> GetList()
     {
         var userId = User.GetUserId();
-        var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay nguoi dung");
+        var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Không tìm thấy người dùng");
 
         var recentExerciseIds = await _db.WorkoutLogs
             .Where(w => w.UserId == userId && w.ExerciseId != null && w.LogDate >= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-14)))
@@ -35,8 +35,8 @@ public class RecommendationsController : ControllerBase
 
         var targetLevel = user.ActivityLevel switch
         {
-            ActivityLevel.Active or ActivityLevel.VeryActive => DifficultyLevel.Advanced,
-            ActivityLevel.Moderate => DifficultyLevel.Intermediate,
+            ActivityLevel.Advanced => DifficultyLevel.Advanced,
+            ActivityLevel.Intermediate => DifficultyLevel.Intermediate,
             _ => DifficultyLevel.Beginner
         };
 
@@ -44,7 +44,7 @@ public class RecommendationsController : ControllerBase
             .Where(e => e.DifficultyLevel == targetLevel && !recentExerciseIds.Contains(e.Id))
             .OrderBy(e => e.Name)
             .Take(5)
-            .Select(e => new RecommendationDto(e.Id, e.Name, $"Phu hop voi muc do van dong '{targetLevel}' cua ban"))
+            .Select(e => new RecommendationDto(e.Id, e.Name, $"Phù hợp với mức độ vận động '{targetLevel}' cua ban"))
             .ToListAsync();
 
         return Ok(ApiResponse<List<RecommendationDto>>.Ok(suggestions));

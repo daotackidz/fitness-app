@@ -3,6 +3,8 @@ export interface CrudFieldConfig {
   label: string;
   type: 'text' | 'textarea' | 'number' | 'select' | 'date' | 'file';
   options?: { value: string; label: string }[];
+  /** For type 'select': load options at runtime from this admin API path (e.g. 'admin/categories?type=Article'). */
+  optionsEndpoint?: string;
   required?: boolean;
   uploadContainer?: string;
   mediaKind?: 'video' | 'image';

@@ -1,71 +1,78 @@
-<h1>Nguoi dung</h1>
+<div class="flex flex-col min-h-[calc(100vh-64px-48px)]">
+  <div class="flex items-center justify-between mb-4">
+    <h1>{{ 'users.title' | translate }}</h1>
+    <button mat-flat-button color="primary" routerLink="/register">
+      <mat-icon>person_add</mat-icon>
+      {{ 'users.addStaff' | translate }}
+    </button>
+  </div>
 
-<div class="search-row">
-  <mat-form-field appearance="outline">
-    <mat-label>Tim kiem theo ten/email</mat-label>
-    <input matInput [(ngModel)]="searchTerm" (keyup.enter)="search()" />
-  </mat-form-field>
-  <button mat-flat-button color="primary" (click)="search()">Tim</button>
+  <div class="flex items-center gap-3 mb-4">
+    <mat-form-field appearance="outline">
+      <mat-label>Tìm kiếm theo tên/email</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (keyup.enter)="search()" />
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="search()">Tìm</button>
+  </div>
+
+  <table mat-table [dataSource]="rows()" class="mat-elevation-z1 w-full">
+    <ng-container matColumnDef="fullName">
+      <th mat-header-cell *matHeaderCellDef>Họ tên</th>
+      <td mat-cell *matCellDef="let row">{{ row.fullName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef>Role</th>
+      <td mat-cell *matCellDef="let row">
+        @if (authService.hasAnyRole(['super_admin'])) {
+          <p-select
+            [options]="roleOptions"
+            [ngModel]="normalizeRole(row.role)"
+            (ngModelChange)="changeRole(row, $event)"
+            styleClass="!min-w-[150px]" />
+        } @else {
+          {{ row.role }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+      <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>Ngày tạo</th>
+      <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Hành động</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-stroked-button (click)="toggleLock(row)">
+          {{ row.status.toLowerCase() === 'locked' ? 'Mở khóa' : 'Khóa' }}
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <div class="flex-1"></div>
+
+  @if (meta(); as m) {
+    <mat-paginator
+      [length]="m.total"
+      [pageSize]="m.limit"
+      [pageIndex]="m.page - 1"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)">
+    </mat-paginator>
+  }
 </div>
-
-<table mat-table [dataSource]="rows()" class="mat-elevation-z1 full-width">
-  <ng-container matColumnDef="fullName">
-    <th mat-header-cell *matHeaderCellDef>Ho ten</th>
-    <td mat-cell *matCellDef="let row">{{ row.fullName }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef>Email</th>
-    <td mat-cell *matCellDef="let row">{{ row.email }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="role">
-    <th mat-header-cell *matHeaderCellDef>Role</th>
-    <td mat-cell *matCellDef="let row">
-      @if (authService.hasAnyRole(['super_admin'])) {
-        <mat-form-field appearance="outline" class="role-select">
-          <mat-select [value]="row.role.toLowerCase()" (selectionChange)="changeRole(row, $event.value)">
-            <mat-option value="user">user</mat-option>
-            <mat-option value="moderator">moderator</mat-option>
-            <mat-option value="admin">admin</mat-option>
-            <mat-option value="super_admin">super_admin</mat-option>
-          </mat-select>
-        </mat-form-field>
-      } @else {
-        {{ row.role }}
-      }
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef>Trang thai</th>
-    <td mat-cell *matCellDef="let row">{{ row.status }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef>Ngay tao</th>
-    <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'short' }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Hanh dong</th>
-    <td mat-cell *matCellDef="let row">
-      <button mat-stroked-button (click)="toggleLock(row)">
-        {{ row.status.toLowerCase() === 'locked' ? 'Mo khoa' : 'Khoa' }}
-      </button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-
-@if (meta(); as m) {
-  <mat-paginator
-    [length]="m.total"
-    [pageSize]="m.limit"
-    [pageIndex]="m.page - 1"
-    [pageSizeOptions]="[10, 20, 50]"
-    (page)="onPage($event)">
-  </mat-paginator>
-}

@@ -153,6 +153,41 @@ namespace FitBodyApp.Infrastructure.Migrations
                     b.ToTable("auth_providers", (string)null);
                 });
 
+            modelBuilder.Entity("FitBodyApp.Domain.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("idx_categories_type_name");
+
+                    b.ToTable("categories", (string)null);
+                });
+
             modelBuilder.Entity("FitBodyApp.Domain.Entities.Challenge", b =>
                 {
                     b.Property<Guid>("Id")
@@ -171,6 +206,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("goal_metric");
+
+                    b.Property<Guid?>("ImageFileId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("image_file_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -194,6 +233,8 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasColumnName("type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ImageFileId");
 
                     b.HasIndex("Type", "StartDate", "EndDate")
                         .HasDatabaseName("idx_challenges_type_dates");
@@ -293,6 +334,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("difficulty_level");
+
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_minutes");
 
                     b.Property<string>("Equipment")
                         .HasMaxLength(50)
@@ -904,6 +949,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("CaloriesEstimate")
+                        .HasColumnType("integer")
+                        .HasColumnName("calories_estimate");
+
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_by_user_id");
@@ -912,15 +961,29 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_minutes");
+
                     b.Property<int?>("DurationWeeks")
                         .HasColumnType("integer")
                         .HasColumnName("duration_weeks");
+
+                    b.Property<Guid?>("ImageFileId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("image_file_id");
 
                     b.Property<bool>("IsCustom")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_custom");
+
+                    b.Property<bool>("IsFeatured")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_featured");
 
                     b.Property<string>("Level")
                         .IsRequired()
@@ -939,6 +1002,8 @@ namespace FitBodyApp.Infrastructure.Migrations
                     b.HasIndex("CreatedByUserId")
                         .HasDatabaseName("idx_routines_created_by");
 
+                    b.HasIndex("ImageFileId");
+
                     b.HasIndex("Level")
                         .HasDatabaseName("idx_routines_level");
 
@@ -950,6 +1015,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("DurationSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_seconds");
 
                     b.Property<Guid>("ExerciseId")
                         .HasColumnType("uuid")
@@ -966,6 +1035,12 @@ namespace FitBodyApp.Infrastructure.Migrations
                     b.Property<int>("RestSeconds")
                         .HasColumnType("integer")
                         .HasColumnName("rest_seconds");
+
+                    b.Property<int>("RoundNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("round_number");
 
                     b.Property<Guid>("RoutineId")
                         .HasColumnType("uuid")
@@ -1107,6 +1182,17 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasColumnType("decimal(5,1)")
                         .HasColumnName("height_cm");
 
+                    b.Property<bool>("IsProfileComplete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_profile_complete");
+
+                    b.Property<string>("Nickname")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nickname");
+
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
@@ -1168,6 +1254,12 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<bool>("DoNotDisturbEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("do_not_disturb_enabled");
+
                     b.Property<string>("Language")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -1176,11 +1268,35 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasDefaultValue("vi")
                         .HasColumnName("language");
 
+                    b.Property<bool>("LockScreenEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("lock_screen_enabled");
+
                     b.Property<bool>("NotificationEnabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("notification_enabled");
+
+                    b.Property<bool>("RemindersEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("reminders_enabled");
+
+                    b.Property<bool>("SoundEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("sound_enabled");
+
+                    b.Property<bool>("VibrateEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("vibrate_enabled");
 
                     b.Property<TimeOnly?>("WorkoutReminderTime")
                         .HasColumnType("time without time zone")
@@ -1197,6 +1313,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("CaloriesEstimate")
+                        .HasColumnType("integer")
+                        .HasColumnName("calories_estimate");
+
                     b.Property<string>("Category")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
@@ -1209,6 +1329,10 @@ namespace FitBodyApp.Infrastructure.Migrations
                     b.Property<int?>("DurationSeconds")
                         .HasColumnType("integer")
                         .HasColumnName("duration_seconds");
+
+                    b.Property<int?>("ExerciseCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("exercise_count");
 
                     b.Property<Guid?>("ThumbnailImageId")
                         .HasColumnType("uuid")
@@ -1377,6 +1501,16 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitBodyApp.Domain.Entities.Challenge", b =>
+                {
+                    b.HasOne("FitBodyApp.Domain.Entities.ImageFile", "ImageFile")
+                        .WithMany()
+                        .HasForeignKey("ImageFileId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ImageFile");
                 });
 
             modelBuilder.Entity("FitBodyApp.Domain.Entities.ChallengeParticipant", b =>
@@ -1607,7 +1741,14 @@ namespace FitBodyApp.Infrastructure.Migrations
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("FitBodyApp.Domain.Entities.ImageFile", "ImageFile")
+                        .WithMany()
+                        .HasForeignKey("ImageFileId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("CreatedByUser");
+
+                    b.Navigation("ImageFile");
                 });
 
             modelBuilder.Entity("FitBodyApp.Domain.Entities.RoutineExercise", b =>

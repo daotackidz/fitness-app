@@ -7,7 +7,8 @@ plugins {
 android {
     namespace = "com.fitbodyapp.fitbody_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion bo qua: khong co plugin nao can bien dich native, va Gradle tu dong tai NDK qua
+    // sdkmanager cu bi loi voi Android CLI tool moi tren may nay.
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

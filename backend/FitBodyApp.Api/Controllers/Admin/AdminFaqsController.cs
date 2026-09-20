@@ -42,18 +42,18 @@ public class AdminFaqsController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertFaqRequest request)
     {
-        var faq = await _db.Faqs.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay FAQ");
+        var faq = await _db.Faqs.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy FAQ");
         faq.Question = request.Question;
         faq.Answer = request.Answer;
         faq.Category = request.Category;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var faq = await _db.Faqs.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay FAQ");
+        var faq = await _db.Faqs.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy FAQ");
         _db.Faqs.Remove(faq);
         await _db.SaveChangesAsync();
         return NoContent();

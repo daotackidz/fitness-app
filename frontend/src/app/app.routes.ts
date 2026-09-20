@@ -21,6 +21,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent)
   },
   {
+    path: 'register',
+    canActivate: [authGuard, roleGuard(ADMIN_ROLES)],
+    loadComponent: () => import('./features/auth/register.component').then((m) => m.RegisterComponent)
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/main-layout.component').then((m) => m.MainLayoutComponent),
     canActivate: [authGuard],
@@ -77,6 +82,11 @@ export const routes: Routes = [
         canActivate: [roleGuard(CONTENT_ROLES)],
         component: SimpleCrudPageComponent,
         data: { resourceConfig: CHALLENGES_CONFIG }
+      },
+      {
+        path: 'categories',
+        canActivate: [roleGuard(CONTENT_ROLES)],
+        loadComponent: () => import('./features/categories/categories.component').then((m) => m.CategoriesComponent)
       },
       {
         path: 'reported-contents',

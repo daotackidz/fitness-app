@@ -6,8 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
 import * as signalR from '@microsoft/signalr';
+import { Select } from 'primeng/select';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../core/models/api-response.model';
@@ -33,9 +33,8 @@ interface SupportMessage {
 @Component({
   selector: 'app-support',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatListModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
-  templateUrl: './support.component.html',
-  styleUrl: './support.component.scss'
+  imports: [CommonModule, FormsModule, MatListModule, MatButtonModule, MatFormFieldModule, MatInputModule, Select],
+  templateUrl: './support.component.html'
 })
 export class SupportComponent implements OnInit, OnDestroy {
   readonly tickets = signal<SupportTicket[]>([]);

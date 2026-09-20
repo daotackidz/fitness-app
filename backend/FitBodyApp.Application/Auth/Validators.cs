@@ -22,11 +22,29 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
     }
 }
 
+public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRequest>
+{
+    public ForgotPasswordRequestValidator()
+    {
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+    }
+}
+
+public class VerifyResetCodeRequestValidator : AbstractValidator<VerifyResetCodeRequest>
+{
+    public VerifyResetCodeRequestValidator()
+    {
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Code).NotEmpty().Length(6);
+    }
+}
+
 public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequest>
 {
     public ResetPasswordRequestValidator()
     {
-        RuleFor(x => x.Token).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Code).NotEmpty().Length(6);
         RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8);
     }
 }

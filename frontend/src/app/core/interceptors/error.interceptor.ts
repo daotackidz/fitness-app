@@ -4,14 +4,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
 
 const ERROR_MESSAGES: Record<string, string> = {
-  VALIDATION_ERROR: 'Du lieu khong hop le',
-  UNAUTHORIZED: 'Ban can dang nhap lai',
-  FORBIDDEN: 'Ban khong co quyen thuc hien hanh dong nay',
-  NOT_FOUND: 'Khong tim thay du lieu',
-  CONFLICT: 'Du lieu bi trung',
-  UNPROCESSABLE_ENTITY: 'Khong the xu ly yeu cau',
-  RATE_LIMITED: 'Ban thao tac qua nhanh, vui long thu lai sau',
-  INTERNAL_ERROR: 'Da co loi he thong, vui long thu lai sau'
+  VALIDATION_ERROR: 'Dữ liệu không hợp lệ',
+  UNAUTHORIZED: 'Bạn cần đăng nhập lại',
+  FORBIDDEN: 'Bạn không có quyền thực hiện hành động này',
+  NOT_FOUND: 'Không tìm thấy dữ liệu',
+  CONFLICT: 'Dữ liệu bị trùng',
+  UNPROCESSABLE_ENTITY: 'Không thể xử lý yêu cầu',
+  RATE_LIMITED: 'Bạn thao tác quá nhanh, vui lòng thử lại sau',
+  INTERNAL_ERROR: 'Đã có lỗi hệ thống, vui lòng thử lại sau'
 };
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -20,8 +20,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const code = error.error?.error?.code as string | undefined;
-      const message = (code && ERROR_MESSAGES[code]) || error.error?.error?.message || 'Da co loi xay ra';
-      snackBar.open(message, 'Dong', { duration: 4000 });
+      const message = error.error?.error?.message || (code && ERROR_MESSAGES[code]) || 'Đã có lỗi xảy ra';
+      snackBar.open(message, 'Đóng', { duration: 4000 });
       return throwError(() => error);
     })
   );

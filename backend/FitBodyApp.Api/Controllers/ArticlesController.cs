@@ -37,7 +37,7 @@ public class ArticlesController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var dto = await _db.Articles.Where(a => a.Id == id).Select(ArticleMappings.ToDto).FirstOrDefaultAsync();
-        if (dto is null) throw AppException.NotFound("Khong tim thay bai viet");
+        if (dto is null) throw AppException.NotFound("Không tìm thấy bài viết");
         return Ok(ApiResponse<ArticleDto>.Ok(dto));
     }
 }

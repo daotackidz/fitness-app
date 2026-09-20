@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Sửa' : 'Thêm mới' }} category</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Tên category</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <label class="block mb-1 text-sm font-medium" [style.color]="'var(--ink-secondary)'">Loại</label>
+    <p-select
+      [options]="typeOptions"
+      optionLabel="label"
+      optionValue="value"
+      formControlName="type"
+      styleClass="w-full mb-1" />
+    @if (isEdit) {
+      <p class="mt-1 mb-4 text-xs" [style.color]="'var(--ink-muted)'">Không thể đổi loại sau khi tạo</p>
+    } @else {
+      <div class="mb-4"></div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Hủy</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Lưu</button>
+  </mat-dialog-actions>
+</form>

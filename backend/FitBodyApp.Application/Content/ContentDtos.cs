@@ -7,11 +7,14 @@ public record ArticleDto(Guid Id, string Title, string? Content, string? Categor
     DateTime? PublishedAt, Guid? CoverImageId);
 
 public record VideoDto(Guid Id, string Title, string? Description, string VideoUrl, string? ThumbnailUrl,
-    int? DurationSeconds, string? Category, Guid VideoFileId, Guid? ThumbnailImageId);
+    int? DurationSeconds, string? Category, int? CaloriesEstimate, int? ExerciseCount, Guid VideoFileId, Guid? ThumbnailImageId);
 
 public record CreateFavoriteRequest(string FavoritableType, Guid FavoritableId);
 
 public record FavoriteDto(Guid Id, string FavoritableType, Guid FavoritableId, DateTime CreatedAt);
+
+public record FavoriteDetailedDto(Guid Id, string FavoritableType, Guid FavoritableId, string Title, string? ImageUrl,
+    string? Description, int? DurationMinutes, int? CaloriesEstimate, int? ExerciseCount, DateTime CreatedAt);
 
 public static class ArticleMappings
 {
@@ -26,5 +29,5 @@ public static class VideoMappings
     public static readonly Expression<Func<Video, VideoDto>> ToDto = v => new VideoDto(
         v.Id, v.Title, v.Description, v.VideoFile.Url,
         v.ThumbnailImage != null ? v.ThumbnailImage.Url : null,
-        v.DurationSeconds, v.Category, v.VideoFileId, v.ThumbnailImageId);
+        v.DurationSeconds, v.Category, v.CaloriesEstimate, v.ExerciseCount, v.VideoFileId, v.ThumbnailImageId);
 }

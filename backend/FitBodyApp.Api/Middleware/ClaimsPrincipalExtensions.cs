@@ -8,7 +8,7 @@ public static class ClaimsPrincipalExtensions
     public static Guid GetUserId(this ClaimsPrincipal principal)
     {
         var sub = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-            ?? throw new InvalidOperationException("Khong tim thay claim sub trong token");
+            ?? throw new InvalidOperationException("Không tìm thấy claim sub trong token");
         return Guid.Parse(sub);
     }
 }

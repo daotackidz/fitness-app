@@ -1,28 +1,81 @@
-<mat-sidenav-container class="layout-container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <div class="brand">FitBody Admin</div>
-    <mat-nav-list>
+<mat-sidenav-container class="h-screen">
+  <mat-sidenav mode="side" opened class="sidenav flex flex-col bg-[var(--sidenav-bg)] text-[var(--sidenav-text)] border-r border-[var(--sidenav-border)]" [class.collapsed]="sidenavService.collapsed()">
+    <div class="brand flex items-center gap-2.5 px-[18px] py-5 flex-none">
+      <div class="flex-none w-[30px] h-[30px] rounded-[9px] bg-[var(--sidenav-accent)] flex items-center justify-center">
+        <mat-icon class="!text-white !text-[18px] !w-[18px] !h-[18px]">bolt</mat-icon>
+      </div>
+      @if (!sidenavService.collapsed()) {
+        <span class="font-extrabold text-[15px] text-[var(--ink-primary)] tracking-wide whitespace-nowrap">FitBody Admin</span>
+      }
+    </div>
+
+    <mat-nav-list class="nav-list flex-none px-2.5 py-1">
       @for (item of visibleNavItems; track item.path) {
-        <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link">
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link" [title]="item.labelKey | translate">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
+          @if (!sidenavService.collapsed()) {
+            <span matListItemTitle>{{ item.labelKey | translate }}</span>
+          }
         </a>
       }
     </mat-nav-list>
+
+    <div class="flex-1"></div>
+
+    <button
+      class="collapse-toggle flex-none flex items-center gap-2 mx-2.5 my-1 px-3 py-2.5 rounded-[10px] bg-transparent text-[var(--sidenav-icon)] text-[13px] font-semibold cursor-pointer hover:bg-[var(--sidenav-hover)]"
+      type="button"
+      (click)="sidenavService.toggle()"
+      [attr.aria-label]="sidenavService.collapsed() ? 'Mở rộng menu' : 'Thu gọn menu'"
+      [title]="sidenavService.collapsed() ? 'Mở rộng' : 'Thu gọn'">
+      <mat-icon class="!text-[19px] !w-[19px] !h-[19px]">{{ sidenavService.collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      @if (!sidenavService.collapsed()) {
+        <span>Thu gọn</span>
+      }
+    </button>
+
+    <div class="sidenav-footer flex-none flex items-center justify-between gap-2 px-3.5 pt-3 pb-4 border-t border-[var(--sidenav-border)]">
+      @if (user()) {
+        <div class="flex items-center gap-2 min-w-0" [title]="user()!.fullName">
+          <span
+            class="flex-none w-7 h-7 rounded-full bg-[var(--sidenav-active-bg)] text-[var(--sidenav-accent)] text-xs font-bold flex items-center justify-center">
+            {{ userInitial }}
+          </span>
+          @if (!sidenavService.collapsed()) {
+            <span class="text-[12.5px] font-semibold text-[var(--ink-secondary)] whitespace-nowrap overflow-hidden text-ellipsis">{{ user()!.fullName }}</span>
+          }
+        </div>
+      }
+      <button
+        class="flex-none w-[30px] h-[30px] flex items-center justify-center rounded-lg bg-transparent text-[var(--sidenav-icon)] cursor-pointer hover:bg-[var(--sidenav-hover)] hover:text-[var(--sidenav-accent)]"
+        type="button"
+        (click)="logout()"
+        [attr.aria-label]="'nav.logout' | translate"
+        [title]="'nav.logout' | translate">
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">logout</mat-icon>
+      </button>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <span class="spacer"></span>
-      @if (user()) {
-        <span class="user-info">{{ user()!.fullName }} ({{ user()!.role }})</span>
-      }
-      <button mat-icon-button (click)="logout()" aria-label="Dang xuat">
-        <mat-icon>logout</mat-icon>
+    <mat-toolbar class="!bg-[var(--topbar-bg)] !text-[var(--ink-primary)] shadow-[0_1px_0_var(--gridline)] transition-colors duration-200">
+      <span class="flex-1"></span>
+
+      <button mat-icon-button (click)="languageService.toggle()" aria-label="Doi ngon ngu" [title]="languageService.lang() === 'vi' ? 'Tieng Viet' : 'English'">
+        <span class="text-xs font-bold text-[var(--ink-secondary)]">{{ languageService.lang() === 'vi' ? 'VI' : 'EN' }}</span>
       </button>
+
+      <div class="flex items-center gap-2 mr-1" [title]="themeService.mode() === 'dark' ? 'Che do toi' : 'Che do sang'">
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px] text-[var(--ink-secondary)]">light_mode</mat-icon>
+        <p-toggleswitch
+          [ngModel]="themeService.mode() === 'dark'"
+          (ngModelChange)="themeService.setMode($event ? 'dark' : 'light')"
+          aria-label="Doi giao dien sang/toi" />
+        <mat-icon class="!text-[18px] !w-[18px] !h-[18px] text-[var(--ink-secondary)]">dark_mode</mat-icon>
+      </div>
     </mat-toolbar>
 
-    <div class="content">
+    <div class="p-6 bg-[var(--page-bg)] min-h-[calc(100vh-64px)]">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>

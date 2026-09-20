@@ -5,6 +5,7 @@ using FitBodyApp.Application.Auth;
 using FitBodyApp.Application.Common;
 using FitBodyApp.Application.Users;
 using FitBodyApp.Infrastructure.Auth;
+using FitBodyApp.Infrastructure.Email;
 using FitBodyApp.Infrastructure.Persistence;
 using FitBodyApp.Infrastructure.Storage;
 using FitBodyApp.Infrastructure.Users;
@@ -53,6 +54,7 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IBlobStorageService, AzureBlobStorageService>();
 builder.Services.AddScoped<IMediaFileService, MediaFileService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 // TODO: chuyen sang Redis khi co san, hien dung IMemoryCache tam thoi
 builder.Services.AddMemoryCache();
@@ -81,6 +83,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
                     context.Token = accessToken;
                 return Task.CompletedTask;
+            },
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                var body = ApiResponse<object>.Fail(ErrorCodes.Unauthorized, "Bạn cần đăng nhập để thực hiện hành động này");
+                await context.Response.WriteAsJsonAsync(body);
+            },
+            OnForbidden = async context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Response.ContentType = "application/json";
+                var body = ApiResponse<object>.Fail(ErrorCodes.Forbidden, "Bạn không có quyền thực hiện hành động này");
+                await context.Response.WriteAsJsonAsync(body);
             }
         };
     });

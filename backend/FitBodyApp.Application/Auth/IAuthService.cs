@@ -9,6 +9,7 @@ public interface IAuthService
     Task<AuthResultDto> RefreshTokenAsync(RefreshTokenRequest request);
     Task LogoutAsync(string refreshToken);
     Task ForgotPasswordAsync(ForgotPasswordRequest request);
+    Task VerifyResetCodeAsync(VerifyResetCodeRequest request);
     Task ResetPasswordAsync(ResetPasswordRequest request);
 }
 

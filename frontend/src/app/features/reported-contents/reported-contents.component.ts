@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { Select } from 'primeng/select';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse, PageMeta } from '../../core/models/api-response.model';
@@ -22,7 +23,7 @@ interface ReportedContent {
 @Component({
   selector: 'app-reported-contents',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatButtonModule, MatSelectModule],
+  imports: [CommonModule, FormsModule, MatTableModule, MatPaginatorModule, MatButtonModule, Select],
   templateUrl: './reported-contents.component.html'
 })
 export class ReportedContentsComponent implements OnInit {
@@ -56,7 +57,7 @@ export class ReportedContentsComponent implements OnInit {
   }
 
   async removeContent(row: ReportedContent): Promise<void> {
-    if (!confirm('Go noi dung vi pham nay?')) return;
+    if (!confirm('Gỡ nội dung vi phạm này?')) return;
     const path = row.reportableType.toLowerCase() === 'forumpost' ? 'forum-posts' : 'comments';
     await firstValueFrom(this.http.delete(`${environment.apiBaseUrl}/admin/${path}/${row.reportableId}`));
     await this.updateStatus(row, 'reviewed');

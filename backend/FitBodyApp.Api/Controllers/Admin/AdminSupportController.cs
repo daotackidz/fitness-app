@@ -45,20 +45,20 @@ public class AdminSupportController : ControllerBase
     public async Task<IActionResult> UpdateStatus(Guid id, UpdateTicketStatusRequest request)
     {
         if (!Enum.TryParse<SupportTicketStatus>(request.Status, true, out var status))
-            throw AppException.ValidationError("status khong hop le");
+            throw AppException.ValidationError("status không hợp lệ");
 
-        var ticket = await _db.SupportTickets.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay ticket");
+        var ticket = await _db.SupportTickets.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy ticket");
         ticket.Status = status;
         await _db.SaveChangesAsync();
 
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat trang thai thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật trạng thái thành công" }));
     }
 
     [HttpGet("{id:guid}/messages")]
     public async Task<IActionResult> GetMessages(Guid id, [FromQuery] int page = 1, [FromQuery] int limit = 50)
     {
         var exists = await _db.SupportTickets.AnyAsync(t => t.Id == id);
-        if (!exists) throw AppException.NotFound("Khong tim thay ticket");
+        if (!exists) throw AppException.NotFound("Không tìm thấy ticket");
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.SupportMessages.Where(m => m.TicketId == id)
@@ -73,7 +73,7 @@ public class AdminSupportController : ControllerBase
     public async Task<IActionResult> Reply(Guid id, CreateSupportMessageRequest request)
     {
         var exists = await _db.SupportTickets.AnyAsync(t => t.Id == id);
-        if (!exists) throw AppException.NotFound("Khong tim thay ticket");
+        if (!exists) throw AppException.NotFound("Không tìm thấy ticket");
 
         var message = new SupportMessage
         {

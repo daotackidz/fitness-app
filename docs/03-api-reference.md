@@ -19,6 +19,7 @@
 | --- | --- | --- | --- |
 | GET | /users/me | Lấy thông tin profile hiện tại | Có |
 | PATCH | /users/me | Cập nhật profile (gender, dob, height, weight, goal, activity_level...) | Có |
+| POST | /users/me/onboarding | Hoàn tất thiết lập hồ sơ lần đầu (sau đăng ký), set is_profile_complete=true | Có |
 | POST | /users/me/avatar | Upload avatar | Có |
 | GET | /users/me/settings | Lấy cài đặt (notification, ngôn ngữ) | Có |
 | PATCH | /users/me/settings | Cập nhật cài đặt (bao gồm giờ nhắc tập) | Có |

@@ -6,6 +6,7 @@ public class User
 {
     public Guid Id { get; set; }
     public string FullName { get; set; } = string.Empty;
+    public string? Nickname { get; set; }
     public string Email { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? PasswordHash { get; set; }
@@ -16,6 +17,7 @@ public class User
     public FitnessGoal? FitnessGoal { get; set; }
     public ActivityLevel? ActivityLevel { get; set; }
     public Guid? AvatarImageId { get; set; }
+    public bool IsProfileComplete { get; set; }
     public UserStatus Status { get; set; } = UserStatus.Active;
     public UserRole Role { get; set; } = UserRole.User;
     public DateTime CreatedAt { get; set; }
@@ -53,6 +55,11 @@ public class UserSetting
 {
     public Guid UserId { get; set; }
     public bool NotificationEnabled { get; set; } = true;
+    public bool SoundEnabled { get; set; } = true;
+    public bool DoNotDisturbEnabled { get; set; }
+    public bool VibrateEnabled { get; set; } = true;
+    public bool LockScreenEnabled { get; set; } = true;
+    public bool RemindersEnabled { get; set; } = true;
     public TimeOnly? WorkoutReminderTime { get; set; }
     public string Language { get; set; } = "vi";
 

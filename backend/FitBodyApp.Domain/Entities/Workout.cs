@@ -13,6 +13,7 @@ public class Exercise
     public Guid? VideoFileId { get; set; }
     public Guid? ImageFileId { get; set; }
     public int? CaloriesEstimate { get; set; }
+    public int? DurationMinutes { get; set; }
 
     public VideoFile? VideoFile { get; set; }
     public ImageFile? ImageFile { get; set; }
@@ -28,8 +29,13 @@ public class Routine
     public int? DurationWeeks { get; set; }
     public bool IsCustom { get; set; }
     public Guid? CreatedByUserId { get; set; }
+    public Guid? ImageFileId { get; set; }
+    public int? DurationMinutes { get; set; }
+    public int? CaloriesEstimate { get; set; }
+    public bool IsFeatured { get; set; }
 
     public User? CreatedByUser { get; set; }
+    public ImageFile? ImageFile { get; set; }
     public ICollection<RoutineExercise> RoutineExercises { get; set; } = new List<RoutineExercise>();
 }
 
@@ -42,6 +48,8 @@ public class RoutineExercise
     public int Reps { get; set; }
     public int RestSeconds { get; set; }
     public int OrderIndex { get; set; }
+    public int RoundNumber { get; set; } = 1;
+    public int? DurationSeconds { get; set; }
 
     public Routine Routine { get; set; } = null!;
     public Exercise Exercise { get; set; } = null!;

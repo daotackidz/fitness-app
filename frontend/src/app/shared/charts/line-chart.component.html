@@ -1,0 +1,27 @@
+@if (points.length === 0) {
+  <p class="chart-empty">{{ emptyLabel }}</p>
+} @else {
+  <svg class="line-chart" [attr.viewBox]="viewBox" preserveAspectRatio="none" role="img">
+    <line class="baseline" x1="0" [attr.y1]="baselineY" x2="100%" [attr.y2]="baselineY"></line>
+
+    <path class="area" [attr.d]="areaPath" [attr.fill]="color"></path>
+    <path class="line" [attr.d]="linePath" [attr.stroke]="color"></path>
+
+    @for (pt of hoverPoints; track pt.label) {
+      <circle class="hover-dot" [attr.cx]="pt.x" [attr.cy]="pt.y" r="6">
+        <title>{{ pt.label }}: {{ formatValue(pt.value) }}</title>
+      </circle>
+    }
+
+    @if (lastPoint) {
+      <circle class="end-marker" [attr.cx]="lastPoint.x" [attr.cy]="lastPoint.y" r="4" [attr.fill]="color"></circle>
+      <text class="end-label" [attr.x]="lastPoint.x + 7" [attr.y]="lastPoint.y" dominant-baseline="middle">
+        {{ formatValue(lastPoint.value) }}
+      </text>
+    }
+  </svg>
+  <div class="axis-labels">
+    <span>{{ firstLabel }}</span>
+    <span>{{ lastLabel }}</span>
+  </div>
+}

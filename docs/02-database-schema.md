@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | id | UUID (PK) | |
 | full_name | VARCHAR(100) | |
+| nickname | VARCHAR(50) | NULLABLE |
 | email | VARCHAR(150) | UNIQUE, NOT NULL |
 | phone | VARCHAR(20) | UNIQUE, NULLABLE |
 | password_hash | VARCHAR(255) | NULL nếu chỉ đăng nhập social |
@@ -15,9 +16,10 @@
 | date_of_birth | DATE | |
 | height_cm | DECIMAL(5,1) | |
 | weight_kg | DECIMAL(5,1) | |
-| fitness_goal | ENUM('lose_weight','build_muscle','maintain','improve_endurance') | |
-| activity_level | ENUM('sedentary','light','moderate','active','very_active') | |
+| fitness_goal | ENUM('lose_weight','gain_weight','muscle_mass_gain','shape_body','others') | |
+| activity_level | ENUM('beginner','intermediate','advanced') | |
 | avatar_url | VARCHAR(255) | |
+| is_profile_complete | BOOLEAN | DEFAULT false; bật true sau khi hoàn tất onboarding lần đầu (bấm Start) |
 | status | ENUM('active','locked','deleted') | DEFAULT 'active' |
 | created_at / updated_at | TIMESTAMP | |
 

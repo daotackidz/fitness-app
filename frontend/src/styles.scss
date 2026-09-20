@@ -2,33 +2,110 @@
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+// custom application at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+// `theme-type` is pinned explicitly on both blocks below. Leaving it out
+// makes Material emit `light-dark(...)` CSS values that silently flip to
+// dark tonal colors whenever the OS/browser prefers dark mode - which is
+// what made the app look "dark with unreadable text" regardless of this
+// file's own light-mode colors. Pinning it means each mode always renders
+// with the exact colors declared here, and switching modes is done by
+// toggling the `.dark` class on <html> (see ThemeService), not by
+// following the OS.
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        theme-type: light,
+        primary: mat.$violet-palette,
+        tertiary: mat.$chartreuse-palette,
       ),
       typography: Roboto,
       density: 0,
     )
   );
+
+  // Brand tokens sampled from the Fitness App UI Kit (Figma): dark
+  // near-black chrome, lavender accent blocks, lime highlight. Kept as
+  // plain custom properties (not routed through Material's tonal palette
+  // generator) so the admin shell can reproduce the exact app colors.
+  // These stay constant in both light and dark app modes - they are the
+  // fixed brand identity (sidebar, login/register screens), not something
+  // the light/dark toggle changes.
+  --brand-dark: #201a2c;
+  --brand-dark-2: #2b2438;
+  --brand-lavender: #b9a9f2;
+  --brand-lavender-soft: #ece7fb;
+  --brand-lime: #d6f84c;
+  --brand-lime-dark: #b9da2e;
+
+  // Neutral chart/content ink & surface tokens, shared by the dashboard
+  // charts and data-dense pages so text/gridlines stay legible on a light
+  // canvas. Overridden below for dark mode.
+  --ink-primary: #0b0b0b;
+  --ink-secondary: #52514e;
+  --ink-muted: #898781;
+  --gridline: #e1e0d9;
+  --card-bg: #ffffff;
+  --chart-track: #ece7fb;
+  --page-bg: #f7f5fc;
+
+  // Sidebar/topbar tokens, modeled after a light SaaS-console nav
+  // (white surface, gray icons/labels, blue active state) - distinct from
+  // the brand-* colors above, which stay fixed for the login/register
+  // screens only. These DO follow the light/dark toggle.
+  --sidenav-bg: #ffffff;
+  --sidenav-border: #eef0f4;
+  --sidenav-hover: #f3f4f8;
+  --sidenav-active-bg: #eaf0ff;
+  --sidenav-icon: #6b7280;
+  --sidenav-text: #4b5262;
+  --sidenav-accent: #3d5afe;
+  --topbar-bg: #ffffff;
+}
+
+html.dark {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$violet-palette,
+        tertiary: mat.$chartreuse-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  --ink-primary: #f5f3f7;
+  --ink-secondary: #c9c5d0;
+  --ink-muted: #9b96a3;
+  --gridline: #3a3640;
+  --card-bg: #211f26;
+  --chart-track: #33303c;
+  --page-bg: #17151b;
+
+  --sidenav-bg: #1c1a22;
+  --sidenav-border: #2c2a33;
+  --sidenav-hover: #262330;
+  --sidenav-active-bg: rgba(76, 111, 255, 0.18);
+  --sidenav-icon: #9b96a3;
+  --sidenav-text: #c9c5d0;
+  --sidenav-accent: #8098ff;
+  --topbar-bg: #211f26;
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
+  // Kept in sync with the pinned Material theme-type above (see
+  // ThemeService, which toggles both the `.dark` class and this).
   color-scheme: light;
 
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
   // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
+  background-color: var(--page-bg);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 
@@ -36,38 +113,9 @@ body {
   margin: 0;
   height: 100%;
 }
+
+html.dark body {
+  color-scheme: dark;
+}
+
 /* You can add global styles to this file, and also import other style files */
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.file-field {
-  margin-bottom: 16px;
-}
-
-.file-field-label {
-  display: block;
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  margin-bottom: 4px;
-}
-
-.file-field-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.file-preview-link {
-  display: inline-block;
-  margin-top: 4px;
-  font-size: 12px;
-}

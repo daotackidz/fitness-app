@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/network/dio_client.dart';
 import '../data/content_api.dart';
 
@@ -21,12 +22,17 @@ class ContentScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Bai viet & Video'),
-          bottom: const TabBar(tabs: [Tab(text: 'Bai viet'), Tab(text: 'Video')]),
+          title: Text(l10n.t('content.title')),
+          bottom: TabBar(tabs: [
+            Tab(text: l10n.t('content.tabs.articles')),
+            Tab(text: l10n.t('content.tabs.videos')),
+          ]),
         ),
         body: TabBarView(children: [_ArticleList(), _VideoList()]),
       ),
@@ -38,9 +44,10 @@ class _ArticleList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final articlesAsync = ref.watch(articlesProvider);
+    final l10n = context.l10n;
     return articlesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, _) => Center(child: Text('Loi tai du lieu: $err')),
+      error: (err, _) => Center(child: Text(l10n.t('common.error.loadFailed', {'error': err.toString()}))),
       data: (items) => ListView.separated(
         itemCount: items.length,
         separatorBuilder: (_, _) => const Divider(height: 1),
@@ -57,9 +64,10 @@ class _VideoList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final videosAsync = ref.watch(videosProvider);
+    final l10n = context.l10n;
     return videosAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, _) => Center(child: Text('Loi tai du lieu: $err')),
+      error: (err, _) => Center(child: Text(l10n.t('common.error.loadFailed', {'error': err.toString()}))),
       data: (items) => ListView.separated(
         itemCount: items.length,
         separatorBuilder: (_, _) => const Divider(height: 1),
@@ -68,7 +76,7 @@ class _VideoList extends ConsumerWidget {
           return ListTile(
             leading: const Icon(Icons.play_circle_outline),
             title: Text(v['title'] as String),
-            subtitle: Text('${v['durationSeconds'] ?? 0}s'),
+            subtitle: Text(l10n.t('content.video.durationSeconds', {'seconds': '${v['durationSeconds'] ?? 0}'})),
           );
         },
       ),

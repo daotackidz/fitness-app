@@ -1,30 +1,86 @@
-.layout-container {
-  height: 100vh;
-}
+// Everything expressible as a plain utility class lives on the template
+// (see main-layout.component.html) - Tailwind classes there, keyed off the
+// same CSS variables the dark-mode toggle already flips. What's left here
+// is only what Tailwind genuinely can't do:
+//   1. Material's MDC list draws its own label/icon color from internal CSS
+//      variables (and its own "active indicator" pill), which a plain
+//      `class` on the host element can't reach into.
+//   2. The collapsed <-> expanded transition and the layout flips that go
+//      with it, which depend on a class toggled by SidenavService rather
+//      than a static template class.
 
 .sidenav {
-  width: 240px;
+  width: 224px;
+  transition:
+    width 0.18s ease,
+    background 0.2s ease;
+  overflow-x: hidden;
 }
 
-.brand {
-  padding: 16px;
-  font-weight: 600;
-  font-size: 18px;
+.sidenav.collapsed {
+  width: 76px;
 }
 
-.active-link {
-  background: rgba(0, 0, 0, 0.06);
+.sidenav.collapsed .brand {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
 }
 
-.spacer {
-  flex: 1 1 auto;
+::ng-deep .sidenav .mat-mdc-list-item {
+  --mdc-list-list-item-label-text-color: var(--sidenav-text);
+  --mdc-list-list-item-leading-icon-icon-color: var(--sidenav-icon);
+  --mdc-list-list-item-label-text-size: 13px;
+  --mdc-list-list-item-one-line-container-height: 40px;
+  --mat-list-active-indicator-color: transparent;
+  border-radius: 10px;
+  margin: 2px 0;
 }
 
-.user-info {
-  margin-right: 12px;
-  font-size: 14px;
+::ng-deep .sidenav .mat-mdc-list-item .mdc-list-item__primary-text {
+  color: var(--sidenav-text) !important;
+  font-size: 13px !important;
+  font-weight: 500;
 }
 
-.content {
-  padding: 24px;
+::ng-deep .sidenav .mat-mdc-list-item .mat-icon {
+  color: var(--sidenav-icon) !important;
+  font-size: 19px !important;
+  width: 19px !important;
+  height: 19px !important;
+}
+
+::ng-deep .sidenav .mat-mdc-list-item:hover {
+  background: var(--sidenav-hover);
+}
+
+::ng-deep .sidenav .active-link {
+  background: var(--sidenav-active-bg) !important;
+}
+
+::ng-deep .sidenav .active-link .mdc-list-item__primary-text {
+  color: var(--sidenav-accent) !important;
+  font-weight: 700;
+}
+
+::ng-deep .sidenav .active-link .mat-icon {
+  color: var(--sidenav-accent) !important;
+}
+
+.sidenav.collapsed ::ng-deep .mat-mdc-list-item {
+  justify-content: center;
+  padding: 0 !important;
+}
+
+.sidenav.collapsed ::ng-deep .mat-mdc-list-item .mdc-list-item__content {
+  justify-content: center;
+}
+
+.sidenav.collapsed .collapse-toggle {
+  justify-content: center;
+}
+
+.sidenav.collapsed .sidenav-footer {
+  flex-direction: column;
+  justify-content: center;
 }

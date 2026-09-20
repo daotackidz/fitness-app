@@ -4,6 +4,7 @@ public interface IUserService
 {
     Task<UserProfileDto> GetProfileAsync(Guid userId);
     Task<UserProfileDto> UpdateProfileAsync(Guid userId, UpdateProfileRequest request);
+    Task<UserProfileDto> CompleteOnboardingAsync(Guid userId, CompleteOnboardingRequest request);
     Task<string> UpdateAvatarAsync(Guid userId, Stream fileStream, string fileName, string? contentType);
     Task<UserSettingsDto> GetSettingsAsync(Guid userId);
     Task<UserSettingsDto> UpdateSettingsAsync(Guid userId, UpdateSettingsRequest request);

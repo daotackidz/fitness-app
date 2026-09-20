@@ -26,7 +26,8 @@ public class AdminChallengesController : ControllerBase
     {
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.Challenges.OrderBy(c => c.StartDate)
-            .Select(c => new ChallengeDto(c.Id, c.Name, c.Description, c.Type.ToString(), c.StartDate, c.EndDate, c.GoalMetric, c.Reward, null))
+            .Select(c => new ChallengeDto(c.Id, c.Name, c.Description, c.Type.ToString(), c.StartDate, c.EndDate, c.GoalMetric, c.Reward,
+                c.ImageFile != null ? c.ImageFile.Url : null, null))
             .ToPagedResultAsync(paging.Page, paging.Limit);
         return Ok(ApiResponse<List<ChallengeDto>>.Ok(items, meta));
     }
@@ -35,7 +36,7 @@ public class AdminChallengesController : ControllerBase
     public async Task<IActionResult> Create(UpsertChallengeRequest request)
     {
         if (!Enum.TryParse<ChallengeType>(request.Type, true, out var type))
-            throw AppException.ValidationError("type khong hop le");
+            throw AppException.ValidationError("type không hợp lệ");
 
         var challenge = new Challenge
         {
@@ -46,7 +47,8 @@ public class AdminChallengesController : ControllerBase
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             GoalMetric = request.GoalMetric,
-            Reward = request.Reward
+            Reward = request.Reward,
+            ImageFileId = request.ImageFileId
         };
         _db.Challenges.Add(challenge);
         await _db.SaveChangesAsync();
@@ -56,9 +58,9 @@ public class AdminChallengesController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertChallengeRequest request)
     {
-        var challenge = await _db.Challenges.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay thu thach");
+        var challenge = await _db.Challenges.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy thử thách");
         if (!Enum.TryParse<ChallengeType>(request.Type, true, out var type))
-            throw AppException.ValidationError("type khong hop le");
+            throw AppException.ValidationError("type không hợp lệ");
 
         challenge.Name = request.Name;
         challenge.Description = request.Description;
@@ -67,14 +69,15 @@ public class AdminChallengesController : ControllerBase
         challenge.EndDate = request.EndDate;
         challenge.GoalMetric = request.GoalMetric;
         challenge.Reward = request.Reward;
+        challenge.ImageFileId = request.ImageFileId;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var challenge = await _db.Challenges.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay thu thach");
+        var challenge = await _db.Challenges.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy thử thách");
         _db.Challenges.Remove(challenge);
         await _db.SaveChangesAsync();
         return NoContent();

@@ -55,14 +55,21 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
     {
         await _authService.ForgotPasswordAsync(request);
-        return Ok(ApiResponse<object>.Ok(new { message = "Neu email ton tai, huong dan dat lai mat khau da duoc gui" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Nếu email tồn tại, mã xác nhận đã được gửi" }));
+    }
+
+    [HttpPost("verify-reset-code")]
+    public async Task<IActionResult> VerifyResetCode(VerifyResetCodeRequest request)
+    {
+        await _authService.VerifyResetCodeAsync(request);
+        return Ok(ApiResponse<object>.Ok(new { message = "Mã xác nhận hợp lệ" }));
     }
 
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
     {
         await _authService.ResetPasswordAsync(request);
-        return Ok(ApiResponse<object>.Ok(new { message = "Dat lai mat khau thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Đặt lại mật khẩu thành công" }));
     }
 
     [HttpPost("logout")]
@@ -70,6 +77,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout(RefreshTokenRequest request)
     {
         await _authService.LogoutAsync(request.RefreshToken);
-        return Ok(ApiResponse<object>.Ok(new { message = "Da dang xuat" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Đã đăng xuất" }));
     }
 }

@@ -74,6 +74,23 @@ class AuthController extends StateNotifier<AuthState> {
     state = state.copyWith(clearUser: true);
   }
 
+  void markProfileComplete({String? avatarUrl}) {
+    final current = state.user;
+    if (current == null) return;
+    state = state.copyWith(
+      user: AuthUser(
+        id: current.id,
+        fullName: current.fullName,
+        email: current.email,
+        phone: current.phone,
+        role: current.role,
+        status: current.status,
+        avatarUrl: avatarUrl ?? current.avatarUrl,
+        isProfileComplete: true,
+      ),
+    );
+  }
+
   Future<void> _applySession(AuthResult result) async {
     _tokenHolder.accessToken = result.accessToken;
     await _ref.read(secureStorageProvider).saveRefreshToken(result.refreshToken);

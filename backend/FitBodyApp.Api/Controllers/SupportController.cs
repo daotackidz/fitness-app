@@ -61,7 +61,7 @@ public class SupportController : ControllerBase
     {
         var userId = User.GetUserId();
         var ownsTicket = await _db.SupportTickets.AnyAsync(t => t.Id == id && t.UserId == userId);
-        if (!ownsTicket) throw AppException.Forbidden("Ban khong co quyen xem ticket nay");
+        if (!ownsTicket) throw AppException.Forbidden("Bạn không có quyền xem ticket này");
 
         var paging = new PagedRequest { Page = page, Limit = limit };
         var (items, meta) = await _db.SupportMessages.Where(m => m.TicketId == id)
@@ -77,7 +77,7 @@ public class SupportController : ControllerBase
     {
         var userId = User.GetUserId();
         var ticket = await _db.SupportTickets.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId)
-            ?? throw AppException.Forbidden("Ban khong co quyen gui tin nhan trong ticket nay");
+            ?? throw AppException.Forbidden("Bạn không có quyền gửi tin nhắn trong ticket này");
 
         var message = new SupportMessage
         {

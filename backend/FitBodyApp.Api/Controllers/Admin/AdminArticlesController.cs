@@ -51,20 +51,20 @@ public class AdminArticlesController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertArticleRequest request)
     {
-        var article = await _db.Articles.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai viet");
+        var article = await _db.Articles.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài viết");
         article.Title = request.Title;
         article.Content = request.Content;
         article.Category = request.Category;
         article.CoverImageId = request.CoverImageId;
         article.Author = request.Author;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var article = await _db.Articles.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai viet");
+        var article = await _db.Articles.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài viết");
         _db.Articles.Remove(article);
         await _db.SaveChangesAsync();
         return NoContent();

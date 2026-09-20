@@ -1,33 +1,32 @@
-<h2 mat-dialog-title>{{ data.record ? 'Sua' : 'Them moi' }} {{ data.config.title }}</h2>
+<h2 mat-dialog-title>{{ data.record ? 'Sửa' : 'Thêm mới' }} {{ data.config.title }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content>
     @for (field of data.config.fields; track field.key) {
       @if (field.type === 'file') {
-        <div class="file-field">
-          <label class="file-field-label">{{ field.label }}</label>
-          <div class="file-field-row">
+        <div class="mb-4">
+          <label class="block text-xs mb-1" [style.color]="'var(--ink-secondary)'">{{ field.label }}</label>
+          <div class="flex items-center gap-2">
             <input type="file" (change)="onFileSelected($event, field.key, field.uploadContainer!, field.mediaKind!)" />
             @if (isUploading(field.key)) {
-              <mat-spinner diameter="20"></mat-spinner>
+              <span class="inline-block h-4 w-4 rounded-full border-2 animate-spin" [style.borderColor]="'var(--gridline)'" [style.borderTopColor]="'var(--ink-primary)'"></span>
             }
           </div>
           @if (previewUrl(field.key)) {
-            <a class="file-preview-link" [href]="previewUrl(field.key)" target="_blank">Xem file da tai len</a>
+            <a class="inline-block mt-1 text-xs" [href]="previewUrl(field.key)" target="_blank">Xem file đã tải lên</a>
           }
         </div>
+      } @else if (field.type === 'select') {
+        <div class="mb-4">
+          <label class="block mb-1 text-sm font-medium" [style.color]="'var(--ink-secondary)'">{{ field.label }}</label>
+          <p-select [options]="optionsFor(field, field.key)" optionLabel="label" optionValue="value" [formControlName]="field.key" [showClear]="true" styleClass="w-full" />
+        </div>
       } @else {
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ field.label }}</mat-label>
 
           @if (field.type === 'textarea') {
             <textarea matInput [formControlName]="field.key" rows="3"></textarea>
-          } @else if (field.type === 'select') {
-            <mat-select [formControlName]="field.key">
-              @for (opt of field.options; track opt.value) {
-                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-              }
-            </mat-select>
           } @else {
             <input matInput [type]="field.type" [formControlName]="field.key" />
           }
@@ -37,7 +36,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()">Huy</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Luu</button>
+    <button mat-button type="button" (click)="cancel()">Hủy</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Lưu</button>
   </mat-dialog-actions>
 </form>

@@ -35,7 +35,9 @@ public class AdminExercisesController : ControllerBase
     public async Task<IActionResult> Create(UpsertExerciseRequest request)
     {
         if (!Enum.TryParse<DifficultyLevel>(request.DifficultyLevel, true, out var level))
-            throw AppException.ValidationError("difficulty_level khong hop le");
+            throw AppException.ValidationError("difficulty_level không hợp lệ");
+        if (request.VideoFileId is null || request.ImageFileId is null)
+            throw AppException.ValidationError("Bài tập bắt buộc phải có video và hình ảnh đại diện");
 
         var exercise = new Exercise
         {
@@ -47,7 +49,8 @@ public class AdminExercisesController : ControllerBase
             DifficultyLevel = level,
             VideoFileId = request.VideoFileId,
             ImageFileId = request.ImageFileId,
-            CaloriesEstimate = request.CaloriesEstimate
+            CaloriesEstimate = request.CaloriesEstimate,
+            DurationMinutes = request.DurationMinutes
         };
         _db.Exercises.Add(exercise);
         await _db.SaveChangesAsync();
@@ -57,9 +60,11 @@ public class AdminExercisesController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpsertExerciseRequest request)
     {
-        var exercise = await _db.Exercises.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai tap");
+        var exercise = await _db.Exercises.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài tập");
         if (!Enum.TryParse<DifficultyLevel>(request.DifficultyLevel, true, out var level))
-            throw AppException.ValidationError("difficulty_level khong hop le");
+            throw AppException.ValidationError("difficulty_level không hợp lệ");
+        if (request.VideoFileId is null || request.ImageFileId is null)
+            throw AppException.ValidationError("Bài tập bắt buộc phải có video và hình ảnh đại diện");
 
         exercise.Name = request.Name;
         exercise.Description = request.Description;
@@ -69,14 +74,15 @@ public class AdminExercisesController : ControllerBase
         exercise.VideoFileId = request.VideoFileId;
         exercise.ImageFileId = request.ImageFileId;
         exercise.CaloriesEstimate = request.CaloriesEstimate;
+        exercise.DurationMinutes = request.DurationMinutes;
         await _db.SaveChangesAsync();
-        return Ok(ApiResponse<object>.Ok(new { message = "Cap nhat thanh cong" }));
+        return Ok(ApiResponse<object>.Ok(new { message = "Cập nhật thành công" }));
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var exercise = await _db.Exercises.FindAsync(id) ?? throw AppException.NotFound("Khong tim thay bai tap");
+        var exercise = await _db.Exercises.FindAsync(id) ?? throw AppException.NotFound("Không tìm thấy bài tập");
         _db.Exercises.Remove(exercise);
         await _db.SaveChangesAsync();
         return NoContent();

@@ -12,22 +12,26 @@ namespace FitBodyApp.Infrastructure.Auth;
 
 public class AuthService : IAuthService
 {
+    private static readonly TimeSpan ResetCodeLifetime = TimeSpan.FromMinutes(1);
+
     private readonly FitBodyDbContext _db;
     private readonly IJwtTokenGenerator _tokenGenerator;
     private readonly IMemoryCache _cache;
+    private readonly IEmailService _emailService;
 
-    public AuthService(FitBodyDbContext db, IJwtTokenGenerator tokenGenerator, IMemoryCache cache)
+    public AuthService(FitBodyDbContext db, IJwtTokenGenerator tokenGenerator, IMemoryCache cache, IEmailService emailService)
     {
         _db = db;
         _tokenGenerator = tokenGenerator;
         _cache = cache;
+        _emailService = emailService;
     }
 
     public async Task<AuthResultDto> RegisterAsync(RegisterRequest request)
     {
         var emailExists = await _db.Users.AnyAsync(u => u.Email == request.Email);
         if (emailExists)
-            throw AppException.Conflict("Email da duoc su dung");
+            throw AppException.Conflict("Email đã được sử dụng");
 
         var now = DateTime.UtcNow;
         var user = new User
@@ -53,10 +57,10 @@ public class AuthService : IAuthService
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user is null || user.PasswordHash is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw AppException.Unauthorized("Email hoac mat khau khong dung");
+            throw AppException.Unauthorized("Email hoặc mật khẩu không đúng");
 
         if (user.Status != UserStatus.Active)
-            throw AppException.Forbidden("Tai khoan da bi khoa hoac xoa");
+            throw AppException.Forbidden("Tài khoản đã bị khóa hoặc xóa");
 
         return await IssueTokensAsync(user);
     }
@@ -65,7 +69,7 @@ public class AuthService : IAuthService
     {
         if (!Enum.TryParse<AuthProviderType>(request.Provider, true, out var providerType) ||
             providerType is not (AuthProviderType.Google or AuthProviderType.Facebook))
-            throw AppException.ValidationError("Provider khong hop le");
+            throw AppException.ValidationError("Provider không hợp lệ");
 
         // TODO: xac thuc id_token thuc su qua Google/Facebook SDK khi co credential; hien tam tin tuong id_token la provider_uid da xac thuc phia client
         var providerUid = request.IdToken;
@@ -74,10 +78,10 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(x => x.Provider == providerType && x.ProviderUid == providerUid);
 
         if (authProvider is null)
-            throw AppException.Unauthorized("Tai khoan social chua duoc lien ket, vui long dang ky truoc");
+            throw AppException.Unauthorized("Tài khoản social chưa được liên kết, vui lòng đăng ký trước");
 
         if (authProvider.User.Status != UserStatus.Active)
-            throw AppException.Forbidden("Tai khoan da bi khoa hoac xoa");
+            throw AppException.Forbidden("Tài khoản đã bị khóa hoặc xóa");
 
         return await IssueTokensAsync(authProvider.User);
     }
@@ -89,10 +93,10 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(x => x.Provider == AuthProviderType.Fingerprint && x.ProviderUid == request.DeviceId);
 
         if (authProvider is null)
-            throw AppException.Unauthorized("Thiet bi chua duoc dang ky dang nhap sinh trac hoc");
+            throw AppException.Unauthorized("Thiết bị chưa được đăng ký đăng nhập sinh trắc học");
 
         if (authProvider.User.Status != UserStatus.Active)
-            throw AppException.Forbidden("Tai khoan da bi khoa hoac xoa");
+            throw AppException.Forbidden("Tài khoản đã bị khóa hoặc xóa");
 
         return await IssueTokensAsync(authProvider.User);
     }
@@ -105,7 +109,7 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(x => x.TokenHash == tokenHash && !x.Revoked);
 
         if (stored is null || stored.ExpiresAt < DateTime.UtcNow)
-            throw AppException.Unauthorized("Refresh token khong hop le hoac da het han");
+            throw AppException.Unauthorized("Refresh token không hợp lệ hoặc đã hết hạn");
 
         stored.Revoked = true;
         return await IssueTokensAsync(stored.User);
@@ -127,24 +131,40 @@ public class AuthService : IAuthService
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user is null) return;
 
-        var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-        _cache.Set($"password-reset:{resetToken}", user.Id, TimeSpan.FromMinutes(15));
+        var code = RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
+        _cache.Set(ResetCodeCacheKey(request.Email), code, ResetCodeLifetime);
 
-        // TODO: tich hop email/SMS that; hien in ra console de test luong dev
-        Console.WriteLine($"[FitBodyApp] Reset password token cho {user.Email}: {resetToken} (het han sau 15 phut)");
+        var html = $"""
+            <p>Xin chào {user.FullName},</p>
+            <p>Mã xác nhận đặt lại mật khẩu FitBody của bạn là:</p>
+            <h2 style="letter-spacing:4px">{code}</h2>
+            <p>Mã có hiệu lực trong 1 phút. Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+            """;
+        await _emailService.SendAsync(user.Email, "Mã xác nhận đặt lại mật khẩu FitBody", html);
+    }
+
+    public Task VerifyResetCodeAsync(VerifyResetCodeRequest request)
+    {
+        if (!_cache.TryGetValue(ResetCodeCacheKey(request.Email), out string? cachedCode) || cachedCode != request.Code)
+            throw AppException.ValidationError("Mã xác nhận không đúng hoặc đã hết hạn");
+        return Task.CompletedTask;
     }
 
     public async Task ResetPasswordAsync(ResetPasswordRequest request)
     {
-        if (!_cache.TryGetValue($"password-reset:{request.Token}", out Guid userId))
-            throw AppException.ValidationError("Token khong hop le hoac da het han");
+        if (!_cache.TryGetValue(ResetCodeCacheKey(request.Email), out string? cachedCode) || cachedCode != request.Code)
+            throw AppException.ValidationError("Mã xác nhận không đúng hoặc đã hết hạn");
 
-        var user = await _db.Users.FindAsync(userId) ?? throw AppException.NotFound("Khong tim thay tai khoan");
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email)
+            ?? throw AppException.NotFound("Không tìm thấy tài khoản");
+
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
         user.UpdatedAt = DateTime.UtcNow;
-        _cache.Remove($"password-reset:{request.Token}");
+        _cache.Remove(ResetCodeCacheKey(request.Email));
         await _db.SaveChangesAsync();
     }
+
+    private static string ResetCodeCacheKey(string email) => $"password-reset-code:{email.Trim().ToLowerInvariant()}";
 
     private async Task<AuthResultDto> IssueTokensAsync(User user)
     {
@@ -165,7 +185,7 @@ public class AuthService : IAuthService
             ? await _db.ImageFiles.Where(i => i.Id == user.AvatarImageId).Select(i => i.Url).FirstOrDefaultAsync()
             : null;
 
-        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Phone, user.Role.ToString(), user.Status.ToString(), avatarUrl);
+        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Phone, user.Role.ToString(), user.Status.ToString(), avatarUrl, user.IsProfileComplete);
         return new AuthResultDto(accessToken, refreshToken, _tokenGenerator.AccessTokenMinutes * 60, userDto);
     }
 

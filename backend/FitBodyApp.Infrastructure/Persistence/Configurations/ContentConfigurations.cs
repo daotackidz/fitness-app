@@ -36,6 +36,8 @@ public class VideoConfiguration : IEntityTypeConfiguration<Video>
         builder.Property(x => x.ThumbnailImageId).HasColumnName("thumbnail_image_id");
         builder.Property(x => x.DurationSeconds).HasColumnName("duration_seconds");
         builder.Property(x => x.Category).HasColumnName("category").HasMaxLength(50);
+        builder.Property(x => x.CaloriesEstimate).HasColumnName("calories_estimate");
+        builder.Property(x => x.ExerciseCount).HasColumnName("exercise_count");
 
         builder.HasIndex(x => x.Category).HasDatabaseName("idx_videos_category");
 

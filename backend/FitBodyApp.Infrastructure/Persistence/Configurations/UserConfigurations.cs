@@ -11,6 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.FullName).HasColumnName("full_name").HasMaxLength(100);
+        builder.Property(x => x.Nickname).HasColumnName("nickname").HasMaxLength(50);
         builder.Property(x => x.Email).HasColumnName("email").HasMaxLength(150).IsRequired();
         builder.Property(x => x.Phone).HasColumnName("phone").HasMaxLength(20);
         builder.Property(x => x.PasswordHash).HasColumnName("password_hash").HasMaxLength(255);
@@ -21,6 +22,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.FitnessGoal).HasColumnName("fitness_goal").HasConversion<string>().HasMaxLength(30);
         builder.Property(x => x.ActivityLevel).HasColumnName("activity_level").HasConversion<string>().HasMaxLength(20);
         builder.Property(x => x.AvatarImageId).HasColumnName("avatar_image_id");
+        builder.Property(x => x.IsProfileComplete).HasColumnName("is_profile_complete").HasDefaultValue(false);
         builder.Property(x => x.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(20).HasDefaultValue(Domain.Enums.UserStatus.Active);
         builder.Property(x => x.Role).HasColumnName("role").HasConversion<string>().HasMaxLength(20).HasDefaultValue(Domain.Enums.UserRole.User);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");
@@ -80,6 +82,11 @@ public class UserSettingConfiguration : IEntityTypeConfiguration<UserSetting>
         builder.HasKey(x => x.UserId);
         builder.Property(x => x.UserId).HasColumnName("user_id");
         builder.Property(x => x.NotificationEnabled).HasColumnName("notification_enabled").HasDefaultValue(true);
+        builder.Property(x => x.SoundEnabled).HasColumnName("sound_enabled").HasDefaultValue(true);
+        builder.Property(x => x.DoNotDisturbEnabled).HasColumnName("do_not_disturb_enabled").HasDefaultValue(false);
+        builder.Property(x => x.VibrateEnabled).HasColumnName("vibrate_enabled").HasDefaultValue(true);
+        builder.Property(x => x.LockScreenEnabled).HasColumnName("lock_screen_enabled").HasDefaultValue(true);
+        builder.Property(x => x.RemindersEnabled).HasColumnName("reminders_enabled").HasDefaultValue(true);
         builder.Property(x => x.WorkoutReminderTime).HasColumnName("workout_reminder_time");
         builder.Property(x => x.Language).HasColumnName("language").HasMaxLength(10).HasDefaultValue("vi");
     }

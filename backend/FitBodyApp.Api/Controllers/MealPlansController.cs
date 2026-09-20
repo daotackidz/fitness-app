@@ -40,7 +40,7 @@ public class MealPlansController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
     {
         var plan = await _db.MealPlans.Include(m => m.Meals).ThenInclude(meal => meal.ImageFile).FirstOrDefaultAsync(m => m.Id == id)
-            ?? throw AppException.NotFound("Khong tim thay meal plan");
+            ?? throw AppException.NotFound("Không tìm thấy meal plan");
 
         var meals = plan.Meals.Select(m => new MealDto(m.Id, m.MealType.ToString(), m.Name, m.Calories, m.ProteinG, m.CarbsG, m.FatG, m.ImageFile?.Url)).ToList();
         var dto = new MealPlanDto(plan.Id, plan.Name, plan.Goal, plan.Description, plan.TotalCalories, plan.IsCustom, plan.CreatedByUserId, meals);
@@ -66,7 +66,7 @@ public class MealPlansController : ControllerBase
         foreach (var item in request.Meals)
         {
             if (!Enum.TryParse<MealType>(item.MealType, true, out var mealType))
-                throw AppException.ValidationError($"meal_type khong hop le: {item.MealType}");
+                throw AppException.ValidationError($"meal_type không hợp lệ: {item.MealType}");
 
             _db.Meals.Add(new Meal
             {

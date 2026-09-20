@@ -21,6 +21,12 @@ abstract class AuthApi {
 
   @POST('/auth/forgot-password')
   Future<HttpResponse<dynamic>> forgotPassword(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/verify-reset-code')
+  Future<HttpResponse<dynamic>> verifyResetCode(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/reset-password')
+  Future<HttpResponse<dynamic>> resetPassword(@Body() Map<String, dynamic> body);
 }
 
 class AuthRepository {
@@ -49,6 +55,14 @@ class AuthRepository {
 
   Future<void> forgotPassword(String email) async {
     await _api.forgotPassword({'email': email});
+  }
+
+  Future<void> verifyResetCode({required String email, required String code}) async {
+    await _api.verifyResetCode({'email': email, 'code': code});
+  }
+
+  Future<void> resetPassword({required String email, required String code, required String newPassword}) async {
+    await _api.resetPassword({'email': email, 'code': code, 'newPassword': newPassword});
   }
 
   AuthResult _parseAuthResult(HttpResponse<dynamic> response) {

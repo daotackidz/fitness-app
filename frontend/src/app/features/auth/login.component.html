@@ -1,28 +1,54 @@
-<div class="login-page">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>FitBody Admin</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" autocomplete="username" />
-        </mat-form-field>
+<div class="min-h-screen flex items-center justify-center bg-brand-dark p-6">
+  <form class="w-full max-w-sm rounded-[28px] overflow-hidden shadow-2xl" [formGroup]="form" (ngSubmit)="submit()">
+    <header class="relative bg-brand-dark text-white px-8 pt-10 pb-7 text-center">
+      <button
+        type="button"
+        class="absolute top-5 right-5 rounded-full bg-white/10 text-brand-lime text-xs font-bold px-3 py-1.5"
+        (click)="languageService.toggle()">
+        {{ languageService.lang() === 'vi' ? 'EN' : 'VI' }}
+      </button>
+      <h1 class="m-0 mb-3 text-2xl font-extrabold text-brand-lime">{{ 'login.title' | translate }}</h1>
+      <p class="m-0 text-sm leading-relaxed text-white/75">{{ 'login.subtitle' | translate }}</p>
+    </header>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mat khau</mat-label>
-          <input matInput type="password" formControlName="password" autocomplete="current-password" />
-        </mat-form-field>
+    <div class="bg-brand-lavender px-7 py-8 flex flex-col gap-5">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-bold text-brand-dark">{{ 'login.email' | translate }}</span>
+        <input
+          class="rounded-2xl border-none px-[18px] py-3.5 text-sm bg-white text-brand-dark outline-none focus:ring-2 focus:ring-brand-dark placeholder:text-[#a9a6b8]"
+          type="email"
+          formControlName="email"
+          autocomplete="username"
+          placeholder="example@example.com" />
+      </label>
 
-        <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid || loading()">
-          @if (loading()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            Dang nhap
-          }
-        </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-bold text-brand-dark">{{ 'login.password' | translate }}</span>
+        <input
+          class="rounded-2xl border-none px-[18px] py-3.5 text-sm bg-white text-brand-dark outline-none focus:ring-2 focus:ring-brand-dark placeholder:text-[#a9a6b8]"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="••••••••••••" />
+      </label>
+
+      <label class="flex items-center gap-2 text-sm font-semibold text-brand-dark cursor-pointer">
+        <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
+        <span>{{ 'login.remember' | translate }}</span>
+      </label>
+    </div>
+
+    <footer class="bg-brand-dark px-8 pt-7 pb-9 flex justify-center">
+      <button
+        class="w-full rounded-full bg-brand-dark-2 text-white text-[15px] font-bold py-3.5 flex items-center justify-center gap-2 transition hover:bg-[#34304a] hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
+        type="submit"
+        [disabled]="form.invalid || loading()">
+        @if (loading()) {
+          <span class="h-5 w-5 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+        } @else {
+          {{ 'login.submit' | translate }}
+        }
+      </button>
+    </footer>
+  </form>
 </div>

@@ -1,0 +1,63 @@
+<div class="flex flex-col min-h-[calc(100vh-64px-48px)]">
+  <div class="flex items-center justify-between mb-4">
+    <h1>{{ 'categories.title' | translate }}</h1>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      {{ 'categories.add' | translate }}
+    </button>
+  </div>
+
+  <mat-button-toggle-group class="mb-4" [value]="activeType()" (change)="selectType($event.value)">
+    @for (opt of typeOptions; track opt.value) {
+      <mat-button-toggle [value]="opt.value">{{ opt.label }}</mat-button-toggle>
+    }
+  </mat-button-toggle-group>
+
+  <table mat-table [dataSource]="rows()" class="mat-elevation-z1 w-full">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>{{ 'categories.name' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="usageCount">
+      <th mat-header-cell *matHeaderCellDef>{{ 'categories.usage' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.usageCount }} nội dung</td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>{{ 'categories.createdAt' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>{{ 'categories.actions' | translate }}</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button (click)="openEdit(row)" aria-label="Sửa">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="delete(row)" aria-label="Xóa">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  @if (!loading() && rows().length === 0) {
+    <p class="text-center text-[13px] py-6" [style.color]="'var(--ink-muted)'">{{ 'categories.empty' | translate }}</p>
+  }
+
+  <div class="flex-1"></div>
+
+  @if (meta(); as m) {
+    <mat-paginator
+      [length]="m.total"
+      [pageSize]="m.limit"
+      [pageIndex]="m.page - 1"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)">
+    </mat-paginator>
+  }
+</div>

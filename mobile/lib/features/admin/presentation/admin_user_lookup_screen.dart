@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import 'admin_providers.dart';
 
 class AdminUserLookupScreen extends ConsumerStatefulWidget {
@@ -33,6 +34,8 @@ class _AdminUserLookupScreenState extends ConsumerState<AdminUserLookupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       children: [
         Padding(
@@ -42,12 +45,12 @@ class _AdminUserLookupScreenState extends ConsumerState<AdminUserLookupScreen> {
               Expanded(
                 child: TextField(
                   controller: _searchController,
-                  decoration: const InputDecoration(hintText: 'Tim theo ten hoac email', border: OutlineInputBorder()),
+                  decoration: InputDecoration(hintText: l10n.t('admin.userLookup.searchHint'), border: const OutlineInputBorder()),
                   onSubmitted: (_) => _search(),
                 ),
               ),
               const SizedBox(width: 8),
-              FilledButton(onPressed: _search, child: const Text('Tim')),
+              FilledButton(onPressed: _search, child: Text(l10n.t('admin.userLookup.searchButton'))),
             ],
           ),
         ),
@@ -61,10 +64,13 @@ class _AdminUserLookupScreenState extends ConsumerState<AdminUserLookupScreen> {
               final isLocked = (u['status'] as String).toLowerCase() == 'locked';
               return ListTile(
                 title: Text(u['fullName'] as String),
-                subtitle: Text('${u['email']} - ${u['role']}'),
+                subtitle: Text(l10n.t('admin.userLookup.userSubtitle', {
+                  'email': '${u['email']}',
+                  'role': '${u['role']}',
+                })),
                 trailing: TextButton(
                   onPressed: () => _toggleLock(u),
-                  child: Text(isLocked ? 'Mo khoa' : 'Khoa'),
+                  child: Text(isLocked ? l10n.t('admin.userLookup.unlock') : l10n.t('admin.userLookup.lock')),
                 ),
               );
             },

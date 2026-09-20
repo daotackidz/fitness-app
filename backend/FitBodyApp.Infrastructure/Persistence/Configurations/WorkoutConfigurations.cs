@@ -18,6 +18,7 @@ public class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
         builder.Property(x => x.VideoFileId).HasColumnName("video_file_id");
         builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
         builder.Property(x => x.CaloriesEstimate).HasColumnName("calories_estimate");
+        builder.Property(x => x.DurationMinutes).HasColumnName("duration_minutes");
 
         builder.HasIndex(x => x.MuscleGroup).HasDatabaseName("idx_exercises_muscle_group");
         builder.HasIndex(x => x.DifficultyLevel).HasDatabaseName("idx_exercises_difficulty");
@@ -40,11 +41,16 @@ public class RoutineConfiguration : IEntityTypeConfiguration<Routine>
         builder.Property(x => x.DurationWeeks).HasColumnName("duration_weeks");
         builder.Property(x => x.IsCustom).HasColumnName("is_custom").HasDefaultValue(false);
         builder.Property(x => x.CreatedByUserId).HasColumnName("created_by_user_id");
+        builder.Property(x => x.ImageFileId).HasColumnName("image_file_id");
+        builder.Property(x => x.DurationMinutes).HasColumnName("duration_minutes");
+        builder.Property(x => x.CaloriesEstimate).HasColumnName("calories_estimate");
+        builder.Property(x => x.IsFeatured).HasColumnName("is_featured").HasDefaultValue(false);
 
         builder.HasIndex(x => x.Level).HasDatabaseName("idx_routines_level");
         builder.HasIndex(x => x.CreatedByUserId).HasDatabaseName("idx_routines_created_by");
 
         builder.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne(x => x.ImageFile).WithMany().HasForeignKey(x => x.ImageFileId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -60,6 +66,8 @@ public class RoutineExerciseConfiguration : IEntityTypeConfiguration<RoutineExer
         builder.Property(x => x.Reps).HasColumnName("reps");
         builder.Property(x => x.RestSeconds).HasColumnName("rest_seconds");
         builder.Property(x => x.OrderIndex).HasColumnName("order_index");
+        builder.Property(x => x.RoundNumber).HasColumnName("round_number").HasDefaultValue(1);
+        builder.Property(x => x.DurationSeconds).HasColumnName("duration_seconds");
 
         builder.HasIndex(x => new { x.RoutineId, x.ExerciseId, x.OrderIndex }).IsUnique().HasDatabaseName("idx_routine_exercise");
         builder.HasIndex(x => x.RoutineId).HasDatabaseName("idx_routine_exercises_routine_id");
